@@ -183,7 +183,7 @@ class HumanResourcesSeeder extends Seeder
 
         [
             'employee_id' => 2,
-            'leave_type' => 'Vacation Leave',
+            'leave_type' => 'Vacation',
             'start_date' => Carbon::parse('2026-01-20'),
             'end_date' => Carbon::parse('2026-01-23'),
             'status' => 'pending',

@@ -20,6 +20,23 @@
     <link rel="stylesheet" href="./assets/compiled/css/iconly.css">
     <link rel="stylesheet" href="./assets/extensions/simple-datatables/style.css">
     <link rel="stylesheet" href="./assets/extensions/table-datatables/style.css">
+    <style>
+        .brand-link {
+            font-weight: bold;
+            font-size: 20px;
+            color: #333;
+            
+        }
+    
+        @media (prefers-color-scheme: dark) {
+            .brand-link {
+                color: #4843e1;
+             
+            }
+        }
+    </style>
+
+
 </head>
 
 <body>
@@ -30,7 +47,7 @@
                 <div class="sidebar-header position-relative">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="logo">
-                            <a href="index.html" style="font-weight: bold; font-size: 20px; color: #333;">
+                            <a href="/dashboard" class="brand-link">
                                 HrisApp
                             </a>
                         </div>

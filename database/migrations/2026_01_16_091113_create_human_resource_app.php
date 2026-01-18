@@ -60,7 +60,7 @@ return new class extends Migration
         // Payroll
         Schema::create('payroll', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('title')->nullable();
             $table->foreignId('employee_id')->constrained('employees');
             $table->decimal('salary', 10, 2);
             $table->decimal('bonuses', 10, 2)->nullable();

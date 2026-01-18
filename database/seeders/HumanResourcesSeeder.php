@@ -126,6 +126,7 @@ class HumanResourcesSeeder extends Seeder
 
     DB::table('payroll')->insert([
     [
+        'title' => 'Monthly Salary January 2026',
         'employee_id' => 1,
         'salary' => $faker->randomFloat(2, 3000, 8000),
         'bonuses' => $faker->randomFloat(2, 500, 800),
@@ -136,6 +137,7 @@ class HumanResourcesSeeder extends Seeder
         'updated_at' => Carbon::now(),
     ],
     [
+        'title' => 'Monthly Salary January 2026',
         'employee_id' => 2,
         'salary' => $faker->randomFloat(2, 3000, 8000),
         'bonuses' => $faker->randomFloat(2, 500, 800),

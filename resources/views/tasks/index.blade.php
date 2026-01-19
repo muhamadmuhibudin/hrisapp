@@ -77,7 +77,7 @@
                                         </div>
 
                                         <div>
-                                            <a href="" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                             <a href="" class="btn btn-sm btn-danger">Delete</a>
                                         </div>
                                     </td>

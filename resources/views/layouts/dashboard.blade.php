@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/iconly.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/extensions/simple-datatables/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/extensions/table-datatables/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         .brand-link {
             font-weight: bold;
@@ -202,6 +203,13 @@
     <script src="{{ asset('assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
     <script src="{{ asset('assets/static/js/pages/simple-datatables.js') }}"></script>
 
+    <!-- Required for date -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr(".date", {
+            dateFormat: "Y-m-d H:i",
+        });
+    </script>
 </body>
 
 </html>

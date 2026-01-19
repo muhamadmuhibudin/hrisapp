@@ -34,7 +34,7 @@
                 <div class="card-body">
                     <form action="{{ route('tasks.store') }}" method="POST">
                         @csrf
-                        
+
                         <div class="mb-3">
                             <label for="" class="form-label">Title</label>
                             <input type="text" class="form-control" name="title" required>
@@ -58,7 +58,7 @@
 
                         <div class="mb-3">
                             <label for="" class="form-label">Due Date</label>
-                            <input type="datetime-local" class="form-control @error('due_date') is-invalid @enderror" value="{{ @old('due_date') }}" name="due_date" required>
+                            <input type="text" class="form-control date @error('due_date') is-invalid @enderror" value="{{ @old('due_date') }}" name="due_date" required>
                             @error('due_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

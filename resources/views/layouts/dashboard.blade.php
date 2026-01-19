@@ -15,11 +15,11 @@
 
 
 
-    <link rel="stylesheet" href="./assets/compiled/css/app.css">
-    <link rel="stylesheet" href="./assets/compiled/css/app-dark.css">
-    <link rel="stylesheet" href="./assets/compiled/css/iconly.css">
-    <link rel="stylesheet" href="./assets/extensions/simple-datatables/style.css">
-    <link rel="stylesheet" href="./assets/extensions/table-datatables/style.css">
+    <link rel="stylesheet" href="{{ asset('assets/compiled/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/compiled/css/app-dark.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/compiled/css/iconly.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/extensions/simple-datatables/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/extensions/table-datatables/style.css') }}">
     <style>
         .brand-link {
             font-weight: bold;
@@ -40,7 +40,7 @@
 </head>
 
 <body>
-    <script src="assets/static/js/initTheme.js"></script>
+    <script src="{{ asset('assets/static/js/initTheme.js') }}"></script>
     <div id="app">
         <div id="sidebar">
             <div class="sidebar-wrapper active">
@@ -190,17 +190,17 @@
             </footer>
         </div>
     </div>
-    <script src="assets/static/js/components/dark.js"></script>
-    <script src="assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="assets/compiled/js/app.js"></script>
+    <script src="{{ asset('assets/static/js/components/dark.js') }}"></script>
+    <script src="{{ asset('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('assets/compiled/js/app.js') }}"></script>
 
     <!-- Need: Apexcharts -->
-    <script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
-    <script src="assets/static/js/pages/dashboard.js"></script>
+    <script src="{{ asset('assets/extensions/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/static/js/pages/dashboard.js') }}"></script>
 
     <!-- Required for handling datatables -->
-    <script src="assets/extensions/simple-datatables/umd/simple-datatables.js"></script>
-    <script src="assets/static/js/pages/simple-datatables.js"></script>
+    <script src="{{ asset('assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
+    <script src="{{ asset('assets/static/js/pages/simple-datatables.js') }}"></script>
 
 </body>
 

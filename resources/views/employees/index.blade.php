@@ -61,12 +61,12 @@
                                     <td>{{ $employees->role->title }}</td>
                                     <td>
                                         @if($employees->status == 'active')
-                                            <span class="badge bg-warning">{{ $employees->status }}</span>
+                                            <span class="badge bg-warning">{{ ucfirst ($employees->status) }}</span>
                                         @else
-                                            <span class="badge bg-info">{{ $employees->status }}</span>
+                                            <span class="badge bg-info">{{ ucfirst ($employees->status) }}</span>
                                         @endif
                                     </td>
-                                    <td>{{ $employees->salary }}</td>
+                                    <td>{{ number_format ($employees->salary) }}</td>
 
                                     <td class="d-flex justify-content-between gap-1">
                                         <a href="{{ route('employees.show', $employees->id) }}" target="_blank" class="btn btn-info btn-sm btn-primary" rel="noopener noreferrer">View</a>

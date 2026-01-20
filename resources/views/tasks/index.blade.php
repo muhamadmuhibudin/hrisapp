@@ -70,9 +70,9 @@
                                             <a href="" class="btn btn-sm btn-info">View</a>
 
                                             @if($task->status == 'pending')
-                                                <a href="" class="btn btn-sm btn-success">Mark as done</a>
+                                                <a href="{{ route('tasks.done', $task->id) }}" class="btn btn-sm btn-success">Mark as done</a>
                                             @else
-                                                <a href="" class="btn btn-sm btn-warning">Mark as Pending</a>
+                                                <a href="{{ route('tasks.pending', $task->id) }}" class="btn btn-sm btn-warning">Mark as Pending</a>
                                             @endif
                                         </div>
 

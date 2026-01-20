@@ -67,7 +67,7 @@
                                     </td>
                                     <td class="d-flex justify-content-between gap-1">
                                         <div>
-                                            <a href="" class="btn btn-sm btn-info">View</a>
+                                            <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-sm btn-info">View</a>
 
                                             @if($task->status == 'pending')
                                                 <a href="{{ route('tasks.done', $task->id) }}" class="btn btn-sm btn-success">Mark as done</a>

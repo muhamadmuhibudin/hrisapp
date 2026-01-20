@@ -44,6 +44,10 @@ class TaskController extends Controller
         return view('tasks.edit', compact('task', 'employees'));
     }
 
+    public function show(Task $task) {
+        return view('tasks.show', compact('task'));
+    }
+
     public function update(Request $request, Task $task)
     {
 

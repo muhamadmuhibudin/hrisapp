@@ -25,7 +25,7 @@ class TaskController extends Controller
     {
 
     $validated = $request->validate ([
-        'title' => 'required|string|max:255',
+        'title' => 'required|string|max:255|unique:tasks,title',
         'description' => 'nullable|string',
         'assigned_to' => 'required|exists:employees,id',
         'due_date' => 'required|date',

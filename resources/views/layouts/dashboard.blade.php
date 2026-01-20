@@ -105,7 +105,7 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="index.html" class="sidebar-link">
+                            <a href="{{ route('employees.index') }}" class="sidebar-link">
                                 <i class="bi bi-people-fill"></i>
                                 <span>Employees</span>
                             </a>

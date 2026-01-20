@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\EmployeeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -15,6 +16,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::resource('/tasks', TaskController::class);
 Route::get('/tasks/done/{id}', [TaskController::class, 'done'])->name('tasks.done');
 Route::get('/tasks/pending/{id}', [TaskController::class, 'pending'])->name('tasks.pending');
+
+// Handle Employees
+Route::resource('/employees', EmployeeController::class);
 
 
 Route::middleware('auth')->group(function () {

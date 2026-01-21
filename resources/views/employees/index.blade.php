@@ -69,8 +69,8 @@
                                     <td>{{ number_format ($employees->salary) }}</td>
 
                                     <td class="d-flex justify-content-between gap-1">
-                                        <a href="{{ route('employees.show', $employees->id) }}" target="_blank" class="btn btn-info btn-sm btn-primary" rel="noopener noreferrer">View</a>
-                                        <a href="{{ route('employees.edit', $employees->id) }}" target="_blank" class="btn btn-warning btn-sm btn-primary">Edit</a>
+                                        <a href="{{ route('employees.show', $employees->id) }}" class="btn btn-info btn-sm btn-primary" rel="noopener noreferrer">View</a>
+                                        <a href="{{ route('employees.edit', $employees->id) }}" class="btn btn-warning btn-sm btn-primary">Edit</a>
                                         <form action="{{ route('employees.destroy', $employees->id) }}" method="POST">
                                             @csrf
                                             @method('delete')

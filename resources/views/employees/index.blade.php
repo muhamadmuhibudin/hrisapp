@@ -61,20 +61,20 @@
                                     <td>{{ $employees->role->title }}</td>
                                     <td>
                                         @if($employees->status == 'active')
-                                            <span class="badge bg-warning">{{ ucfirst ($employees->status) }}</span>
+                                            <span class="badge bg-warning">{{ ucfirst($employees->status) }}</span>
                                         @else
-                                            <span class="badge bg-info">{{ ucfirst ($employees->status) }}</span>
+                                            <span class="badge bg-info">{{ ucfirst($employees->status) }}</span>
                                         @endif
                                     </td>
-                                    <td>{{ number_format ($employees->salary) }}</td>
+                                    <td>{{ number_format($employees->salary) }}</td>
 
                                     <td class="d-flex justify-content-between gap-1">
                                         <a href="{{ route('employees.show', $employees->id) }}" class="btn btn-info btn-sm btn-primary" rel="noopener noreferrer">View</a>
                                         <a href="{{ route('employees.edit', $employees->id) }}" class="btn btn-warning btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('employees.destroy', $employees->id) }}" method="POST">
+                                        <form action="{{ route('employees.destroy', $employees->id) }}" method="POST" class="d-inline delete-form">
                                             @csrf
-                                            @method('delete')
-                                            <button type="submit" class="btn btn-danger btn-sm btn-primary delete-form">Delete</button>
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

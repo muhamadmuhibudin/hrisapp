@@ -8,8 +8,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('presences', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees');
+            $table->unsignedBigInteger('employee_id');
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+
             $table->dateTime('check_in');
             $table->dateTime('check_out')->nullable();
             $table->date('date');

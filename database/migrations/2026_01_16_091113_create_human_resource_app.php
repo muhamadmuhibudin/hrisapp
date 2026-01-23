@@ -102,8 +102,8 @@ return new class extends Migration
         Schema::dropIfExists('presences');
         Schema::dropIfExists('payroll');
         Schema::dropIfExists('tasks');
+        Schema::dropIfExists('employees');
         Schema::dropIfExists('roles');
         Schema::dropIfExists('departments');
-        Schema::dropIfExists('employees');
     }
 };

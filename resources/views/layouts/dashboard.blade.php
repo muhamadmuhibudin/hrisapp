@@ -125,8 +125,8 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item">
-                            <a href="index.html" class="sidebar-link">
+                        <li class="sidebar-item {{ request()->routeIs('presences.*') ? 'active' : '' }}">
+                            <a href="{{ route('presences.index') }}" class="sidebar-link">
                                 <i class="bi bi-table"></i>
                                 <span>Presences</span>
                             </a>

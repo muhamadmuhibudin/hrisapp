@@ -7,6 +7,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PresenceController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,6 +28,9 @@ Route::resource('/departments', DepartmentController::class);
 
 // Handle Roles
 Route::resource('/roles', RoleController::class);
+
+// Handle Roles
+Route::resource('/presences', PresenceController::class);
 
 
 Route::middleware('auth')->group(function () {

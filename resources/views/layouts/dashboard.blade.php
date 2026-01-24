@@ -132,8 +132,8 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item">
-                            <a href="index.html" class="sidebar-link">
+                        <li class="sidebar-item {{ request()->routeIs('payrolls.*') ? 'active' : '' }}">
+                            <a href="{{ route('payrolls.index') }}" class="sidebar-link">
                                 <i class="bi bi-currency-dollar"></i>
                                 <span>Payroll</span>
                             </a>

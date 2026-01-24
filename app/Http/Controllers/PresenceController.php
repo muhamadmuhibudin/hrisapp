@@ -24,7 +24,7 @@ class PresenceController extends Controller
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'check_in' => 'required',
-            'check_out' => 'nullable',
+            'check_out' => 'required',
             'date' => 'required|date',
             'status' => 'required|string',
         ]);

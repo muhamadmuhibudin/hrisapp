@@ -209,9 +209,15 @@
     <!-- Required for date -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        flatpickr(".date", {
-            dateFormat: "Y-m-d H:i",
+        let date = flatpickr('.date', {
+            dateformat: "Y-m-d",
         });
+
+        let datetime = flatpickr('.datetime', {
+            dateFormat: "Y-m-d H:i:S",
+            enableTime: true,
+            time_24hr: true,
+        })
         </script>
 
     <!-- handling sweet alert to delete tasks -->

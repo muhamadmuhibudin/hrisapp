@@ -258,6 +258,21 @@
         });
     @endif
 
+    // handling for net salary
+            function calculateNetSalary() {
+                let salary = parseFloat(document.querySelector('input[name="salary"]').value) || 0;
+            let bonuses = parseFloat(document.querySelector('input[name="bonuses"]').value) || 0;
+            let deductions = parseFloat(document.querySelector('input[name="deductions"]').value) || 0;
+
+            let net = salary + bonuses - deductions;
+
+            document.getElementById('net_salary').value = net;
+    }
+
+            document.querySelector('input[name="salary"]').addEventListener('input', calculateNetSalary);
+            document.querySelector('input[name="bonuses"]').addEventListener('input', calculateNetSalary);
+            document.querySelector('input[name="deductions"]').addEventListener('input', calculateNetSalary);
+
 
     </script>
 

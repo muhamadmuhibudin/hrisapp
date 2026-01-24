@@ -35,4 +35,26 @@ class PresenceController extends Controller
                          ->with('success', 'Presence recorded successfully.');
     }
 
+    public function edit(Presence $presence) 
+    {
+        $employees = Employee::all();
+        return view('presences.edit', compact('presence', 'employees'));
+    } 
+
+    public function update(Request $request, Presence $presence)
+    {
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'check_in' => 'required',
+            'check_out' => 'required',
+            'date' => 'required|date',
+            'status' => 'required|string',
+        ]);
+
+        $presence->update($request->all());
+
+        return redirect()->route('presences.index')
+                         ->with('success', 'Presence updated successfully.');
+    }
+
 }

@@ -64,6 +64,7 @@
 
                                     <td class="d-flex justify-content-between gap-1">
                                         <div>
+                                            <a href="{{ route('payrolls.show', $payroll->id) }}" class="btn btn-sm btn-info">Salary Slip</a>
                                             <a href="{{ route('payrolls.edit', $payroll->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
                                             <form action="{{ route('payrolls.destroy', $payroll->id) }}" method="POST" class="d-inline delete-form">

@@ -64,6 +64,11 @@ class PayrollController extends Controller
             ->with('success', 'Payroll updated successfully.');
     }
 
+    public function show(Payroll $payroll)
+    {
+        return view('payrolls.show', compact('payroll'));
+    }
+
     public function destroy(Payroll $payroll)
     {
         $payroll->delete();

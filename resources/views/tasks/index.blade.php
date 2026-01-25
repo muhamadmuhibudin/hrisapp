@@ -33,8 +33,11 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex">
+                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
                         <a href="{{ route('tasks.create') }}" class="btn btn-primary mb-3 ms-auto">New Task</a>
+                        @endif
                     </div>
+
                     @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
@@ -76,6 +79,8 @@
                                             @endif
                                         </div>
 
+                                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
+
                                         <div>
                                             <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
@@ -85,6 +90,8 @@
                                                 <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                                             </form>
                                         </div>
+
+                                        @endif
                                     </td>
                                 </tr>
 

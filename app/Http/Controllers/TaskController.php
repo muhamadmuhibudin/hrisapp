@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Task;
 use App\Models\Employee;
 
@@ -10,7 +11,13 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::all();
+        $role = Auth::user()->employee?->role?->title;
+
+        if (in_array($role, ['Super Admin', 'HR Manager'])) {
+            $tasks = Task::all();
+        } else {
+            $tasks = Task::where('assigned_to', Auth::user()->employee_id)->get();
+        }
 
         return view('tasks.index', compact('tasks'));
     }

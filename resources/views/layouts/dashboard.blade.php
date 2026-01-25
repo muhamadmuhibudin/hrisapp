@@ -98,30 +98,32 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        
-                        <li class="sidebar-item {{ request()->routeIs('tasks.*') ? 'active' : '' }}">
-                            <a href="{{ route('tasks.index') }}" class="sidebar-link">
-                                <i class="bi bi-check-circle-fill"></i>
-                                <span>Tasks</span>
-                            </a>
-                        </li>
-                        
+
                         <li class="sidebar-item {{ request()->routeIs('employees.*') ? 'active' : '' }}">
                             <a href="{{ route('employees.index') }}" class="sidebar-link">
                                 <i class="bi bi-people-fill"></i>
                                 <span>Employees</span>
                             </a>
                         </li>
+                        
                         <li class="sidebar-item {{ request()->routeIs('departments.*') ? 'active' : '' }}">
                             <a href="{{ route('departments.index') }}" class="sidebar-link">
                                 <i class="bi bi-briefcase"></i>
                                 <span>Departments</span>
                             </a>
                         </li>
+
                         <li class="sidebar-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
                             <a href="{{ route('roles.index') }}" class="sidebar-link">
                                 <i class="bi bi-tag"></i>
                                 <span>Roles</span>
+                            </a>
+                        </li>
+                        
+                        <li class="sidebar-item {{ request()->routeIs('tasks.*') ? 'active' : '' }}">
+                            <a href="{{ route('tasks.index') }}" class="sidebar-link">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>Tasks</span>
                             </a>
                         </li>
 
@@ -132,20 +134,20 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item {{ request()->routeIs('payrolls.*') ? 'active' : '' }}">
-                            <a href="{{ route('payrolls.index') }}" class="sidebar-link">
-                                <i class="bi bi-currency-dollar"></i>
-                                <span>Payroll</span>
-                            </a>
-                        </li>
-
                         <li class="sidebar-item {{ request()->routeIs('leave-requests.*') ? 'active' : '' }}">
                             <a href="{{ route('leave-requests.index') }}" class="sidebar-link">
                                 <i class="bi bi-shift-fill"></i>
                                 <span>Leave Requests</span>
                             </a>
                         </li>
-
+                        
+                        <li class="sidebar-item {{ request()->routeIs('payrolls.*') ? 'active' : '' }}">
+                            <a href="{{ route('payrolls.index') }}" class="sidebar-link">
+                                <i class="bi bi-currency-dollar"></i>
+                                <span>Payroll</span>
+                            </a>
+                        </li>
+                        
                         <!-- <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="bi bi-stack"></i>

@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->date('start_date');
             $table->date('end_date');
             $table->string('reason');
-            $table->string('status');
+            $table->string('status')->default('Pending');
             $table->timestamps();
             $table->softDeletes();
         });

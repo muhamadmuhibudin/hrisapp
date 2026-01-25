@@ -139,8 +139,8 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item">
-                            <a href="index.html" class="sidebar-link">
+                        <li class="sidebar-item {{ request()->routeIs('leave-requests.*') ? 'active' : '' }}">
+                            <a href="{{ route('leave-requests.index') }}" class="sidebar-link">
                                 <i class="bi bi-shift-fill"></i>
                                 <span>Leave Requests</span>
                             </a>

@@ -38,4 +38,25 @@ class LeaveRequestController extends Controller
         return redirect()->route('leave-requests.index')
                          ->with('success', 'Leave request created successfully.');
     }
+
+    public function edit(LeaveRequest $leaveRequest)
+    {
+        $employees = Employee::all();
+        return view("leave-requests.edit", 
+        compact("leaveRequest", "employees"));
+    }
+
+    public function update(Request $request, LeaveRequest $leaveRequest)
+    {
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'reason' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $leaveRequest->update($request->all());
+        return redirect()->route('leave-requests.index')
+                         ->with('success', 'Leave request updated successfully.');
+    }
 }

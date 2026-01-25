@@ -10,7 +10,11 @@ class LeaveRequestController extends Controller
 {
     public function index()
     {
-        $leaveRequests = LeaveRequest::all();
+        if (session('role') == 'Employee') {
+            $leaveRequests = leaveRequest::where('employee_id', session('employee_id'))->get();
+        } else {
+            $leaveRequests = LeaveRequest::all();
+        }
         return view("leave-requests.index", 
         compact("leaveRequests"));
     }
@@ -23,6 +27,7 @@ class LeaveRequestController extends Controller
 
     public function store(Request $request)
     {
+        if (session('role') == 'Employee') {
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'reason' => 'required|string|max:255',
@@ -35,6 +40,19 @@ class LeaveRequestController extends Controller
         );
 
         LeaveRequest::create($request->all());
+
+        } else {
+        LeaveRequest::create([
+                'employee_id' => Auth::user()->employee_id,
+                'reason' => $request->reason,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'status' => 'Pending',
+            ]);
+
+        }
+
+        
         return redirect()->route('leave-requests.index')
                          ->with('success', 'Leave request created successfully.');
     }

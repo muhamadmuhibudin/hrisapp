@@ -46,6 +46,8 @@
                     <form action="{{ route('leave-requests.store') }}" method="POST">
                         @csrf
 
+                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
+
                         <div class="mb-3">
                             <label for="employee_id" class="form-label">Employee</label>
                             <select name="employee_id" id="status" class="form-control">
@@ -57,6 +59,8 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        @endif
 
                         <div class="mb-3">
                             <label for="reason" class="form-label">Reason</label>

@@ -49,7 +49,9 @@
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Status</th>
-                                <th>Option</th>
+                                @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
+                                    <th>Option</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -62,44 +64,47 @@
                                     <td>
                                         @php
                                             $status = ucfirst($leaveRequest->status);
+                                            $rawStatus = strtolower($leaveRequest->status);
                                         @endphp
 
-                                        @if($leaveRequest->status === 'Pending')
+                                        @if($leaveRequest->status === 'pending')
                                             <span class="badge bg-warning">{{ $status }}</span>
-                                        @elseif($leaveRequest->status === 'Rejected')
+                                        @elseif($leaveRequest->status === 'rejected')
                                             <span class="badge bg-danger">{{ $status }}</span>
-                                        @elseif($leaveRequest->status === 'Confirmed')
+                                        @elseif($leaveRequest->status === 'confirmed')
                                             <span class="badge bg-success">{{ $status }}</span>
                                         @endif
                                     </td>
 
                                     <td class="d-flex justify-content-between">
-                                        <div>
-                                            @if($leaveRequest->status === 'Pending')
-                                                <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
-                                                    class="btn btn-sm btn-success">Confirm</a>
-                                                <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
-                                                    class="btn btn-sm btn-warning">Reject</a>
-                                            @elseif($leaveRequest->status === 'Confirmed')
-                                                <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
-                                                    class="btn btn-sm btn-warning">Reject</a>
-                                            @elseif($leaveRequest->status === 'Rejected')
-                                                <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
-                                                    class="btn btn-sm btn-success">Confirm</a>
-                                            @endif
-                                        </div>
+                                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
+                                            <div>
+                                                @if($leaveRequest->status === 'Pending')
+                                                    <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
+                                                        class="btn btn-sm btn-success">Confirm</a>
+                                                    <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
+                                                        class="btn btn-sm btn-warning">Reject</a>
+                                                @elseif($leaveRequest->status === 'Confirmed')
+                                                    <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
+                                                        class="btn btn-sm btn-warning">Reject</a>
+                                                @elseif($leaveRequest->status === 'Rejected')
+                                                    <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
+                                                        class="btn btn-sm btn-success">Confirm</a>
+                                                @endif
+                                            </div>
 
-                                        <div>
-                                            <a href="{{ route('leave-requests.edit', $leaveRequest->id) }}"
-                                                class="btn btn-sm btn-primary">Edit</a>
+                                            <div>
+                                                <a href="{{ route('leave-requests.edit', $leaveRequest->id) }}"
+                                                    class="btn btn-sm btn-primary">Edit</a>
 
-                                            <form action="{{ route('leave-requests.destroy', $leaveRequest->id) }}"
-                                                method="POST" class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                            </form>
-                                        </div>
+                                                <form action="{{ route('leave-requests.destroy', $leaveRequest->id) }}"
+                                                    method="POST" class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                </form>
+                                            </div>
+                                        @endif
                                     </td>
 
 

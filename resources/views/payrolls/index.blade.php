@@ -33,7 +33,9 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex">
+                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
                         <a href="{{ route('payrolls.create') }}" class="btn btn-primary mb-3 ms-auto">New Payroll</a>
+                        @endif
                     </div>
                     @if(session('success'))
                         <div class="alert alert-success">
@@ -65,6 +67,8 @@
                                     <td class="d-flex justify-content-between gap-1">
                                         <div>
                                             <a href="{{ route('payrolls.show', $payroll->id) }}" class="btn btn-sm btn-info">Salary Slip</a>
+
+                                            @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
                                             <a href="{{ route('payrolls.edit', $payroll->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
                                             <form action="{{ route('payrolls.destroy', $payroll->id) }}" method="POST" class="d-inline delete-form">
@@ -72,6 +76,7 @@
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                                             </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

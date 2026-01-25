@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Payroll;
 use App\Models\Employee;
 
@@ -10,7 +11,16 @@ class PayrollController extends Controller
 {
     public function index(Request $request)
     {
-        $payrolls = Payroll::all();
+        $role = Auth::user()->employee?->role?->title;
+
+        if (in_array($role, ['Super Admin', 'HR Manager'])) {
+            $payrolls = Payroll::with('employee')->get();
+        } else {
+            $payrolls = Payroll::with('employee')
+                ->where('employee_id', Auth::user()->employee_id)
+                ->get();
+        }
+
         return view ('payrolls.index', compact ('payrolls'));
     }
 

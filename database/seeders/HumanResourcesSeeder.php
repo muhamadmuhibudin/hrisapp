@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Hash;
+
 
 class HumanResourcesSeeder extends Seeder
 {
@@ -40,20 +42,20 @@ class HumanResourcesSeeder extends Seeder
         // Roles
         DB::table('roles')->insert([
             [
-                'title' => 'HR',
-                'description' => 'Handling team',
+                'title' => 'HR Manager',
+                'description' => 'Manage employees & payroll',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'title' => 'Developer',
-                'description' => 'Handling codes',
+                'title' => 'Super Admin',
+                'description' => 'Full system access',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'title' => 'Sales',
-                'description' => 'Handling selling',
+                'title' => 'Employee',
+                'description' => 'Self-service access',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -62,30 +64,44 @@ class HumanResourcesSeeder extends Seeder
         // Employees
         DB::table('employees')->insert([
             [
-                'fullname' => $faker->name,
-                'email' => $faker->unique()->safeEmail,
-                'phone_number' => $faker->phoneNumber,
-                'address' => $faker->address,
-                'birth_date' => $faker->date('Y-m-d', '-20 years'),
+                'fullname' => 'Muna Smith',
+                'email' => 'test@example.com',
+                'phone_number' => '081234567890',
+                'address' => 'Jl. Mawar No. 1',
+                'birth_date' => '1990-01-01',
                 'hire_date' => now(),
                 'department_id' => 1,
                 'role_id' => 1,
                 'status' => 'active',
-                'salary' => $faker->randomFloat(2, 3000, 8000),
+                'salary' => 8000000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'fullname' => $faker->name,
-                'email' => $faker->unique()->safeEmail,
-                'phone_number' => $faker->phoneNumber,
-                'address' => $faker->address,
-                'birth_date' => $faker->date('Y-m-d', '-20 years'),
+                'fullname' => 'Deni Wijaya',
+                'email' => 'employee@example.com',
+                'phone_number' => '082233445566',
+                'address' => 'Jl. Melati No. 2',
+                'birth_date' => '1995-02-02',
+                'hire_date' => now(),
+                'department_id' => 3,
+                'role_id' => 3,
+                'status' => 'active',
+                'salary' => 4000000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'fullname' => 'Dr. John Doe',
+                'email' => 'superadmin@example.com',
+                'phone_number' => '082737384937',
+                'address' => 'Wall Street 128',
+                'birth_date' => '1985-03-03',
                 'hire_date' => now(),
                 'department_id' => 2,
                 'role_id' => 2,
                 'status' => 'active',
-                'salary' => $faker->randomFloat(2, 3000, 8000),
+                'salary' => 12000000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -182,5 +198,74 @@ class HumanResourcesSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+
+        // Users
+        DB::table('users')->updateOrInsert(
+            ['email' => 'hr@example.com'],
+            [
+                'name' => 'Muna Smith',
+                'password' => Hash::make('password'),
+                'employee_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('users')->updateOrInsert(
+            ['email' => 'employee@example.com'],
+            [
+                'name' => 'Deni Wijaya',
+                'password' => Hash::make('password'),
+                'employee_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('users')->updateOrInsert(
+            ['email' => 'superadmin@example.com'],
+            [
+                'name' => 'Dr. John Doe',
+                'password' => Hash::make('password'),
+                'employee_id' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
     }
 }
+
+/*
+ // Employees (faker version, for reference)
+ DB::table('employees')->insert([
+     [
+         'fullname' => $faker->name,
+         'email' => $faker->unique()->safeEmail,
+         'phone_number' => $faker->phoneNumber,
+         'address' => $faker->address,
+         'birth_date' => $faker->date('Y-m-d', '-20 years'),
+         'hire_date' => now(),
+         'department_id' => 1,
+         'role_id' => 1,
+         'status' => 'active',
+         'salary' => $faker->randomFloat(2, 3000, 8000),
+         'created_at' => now(),
+         'updated_at' => now(),
+     ],
+     [
+         'fullname' => $faker->name,
+         'email' => $faker->unique()->safeEmail,
+         'phone_number' => $faker->phoneNumber,
+         'address' => $faker->address,
+         'birth_date' => $faker->date('Y-m-d', '-20 years'),
+         'hire_date' => now(),
+         'department_id' => 2,
+         'role_id' => 2,
+         'status' => 'active',
+         'salary' => $faker->randomFloat(2, 3000, 8000),
+         'created_at' => now(),
+         'updated_at' => now(),
+     ],
+ ]);
+*/

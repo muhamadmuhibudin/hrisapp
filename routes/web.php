@@ -11,43 +11,61 @@ use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\LeaveRequestController;
 
-
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth'])->group(function () {
 
-// Handle tasks
-Route::resource('/tasks', TaskController::class);
-Route::get('/tasks/done/{id}', [TaskController::class, 'done'])->name('tasks.done');
-Route::get('/tasks/pending/{id}', [TaskController::class, 'pending'])->name('tasks.pending');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-// Handle Employees
-Route::resource('/employees', EmployeeController::class);
+    // Tasks
+    Route::resource('/tasks', TaskController::class)
+        ->middleware('checkRole:Super Admin,HR Manager,Employee');
+    Route::get('/tasks/done/{id}', [TaskController::class, 'done'])
+        ->name('tasks.done')
+        ->middleware('checkRole:Super Admin,HR Manager');
+    Route::get('/tasks/pending/{id}', [TaskController::class, 'pending'])
+        ->name('tasks.pending')
+        ->middleware('checkRole:Super Admin,HR Manager');
 
-// Handle Departments
-Route::resource('/departments', DepartmentController::class);
+    // Employees
+    Route::resource('/employees', EmployeeController::class)
+        ->middleware('checkRole:Super Admin,HR Manager');
 
-// Handle Roles
-Route::resource('/roles', RoleController::class);
+    // Departments
+    Route::resource('/departments', DepartmentController::class)
+        ->middleware('checkRole:Super Admin,HR Manager');
 
-// Handle Presences
-Route::resource('/presences', PresenceController::class);
+    // Roles
+    Route::resource('/roles', RoleController::class)
+        ->middleware('checkRole:Super Admin,HR Manager');
 
-// Handle Payrolls
-Route::resource('/payrolls', PayrollController::class);
+    // Presences
+    Route::resource('/presences', PresenceController::class)
+        ->middleware('checkRole:Super Admin,HR Manager,Employee');
 
-// Handle Leave Requests
-Route::resource('/leave-requests', LeaveRequestController::class);
-Route::get('leave-requests/confirm/{id}', [LeaveRequestController::class, 'confirm'])->name('leave-requests.confirm');
-Route::get('leave-requests/reject/{id}', [LeaveRequestController::class, 'reject'])->name('leave-requests.reject');
+    // Payrolls
+    Route::resource('/payrolls', PayrollController::class)
+        ->middleware('checkRole:Super Admin,HR Manager,Employee');
 
+    // Leave Requests
+    Route::resource('/leave-requests', LeaveRequestController::class)
+        ->middleware('checkRole:Super Admin,HR Manager,Employee');
+    Route::get('leave-requests/confirm/{id}', [LeaveRequestController::class, 'confirm'])
+        ->name('leave-requests.confirm')
+        ->middleware('checkRole:HR Manager,Super Admin');
+    Route::get('leave-requests/reject/{id}', [LeaveRequestController::class, 'reject'])
+        ->name('leave-requests.reject')
+        ->middleware('checkRole:HR Manager,Super Admin');
+});
 
+// Profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

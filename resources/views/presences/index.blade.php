@@ -48,7 +48,9 @@
                                 <th>Check Out</th>
                                 <th>Date</th>
                                 <th>Status</th>
+                                @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
                                 <th>Option</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -68,6 +70,7 @@
 
                                     <td class="d-flex justify-content-between gap-1">
                                         <div>
+                                            @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
                                             <a href="{{ route('presences.edit', $presence->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
                                             <form action="{{ route('presences.destroy', $presence->id) }}" method="POST" class="d-inline delete-form">
@@ -75,6 +78,7 @@
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                                             </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

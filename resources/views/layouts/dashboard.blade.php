@@ -22,6 +22,11 @@
     <link rel="stylesheet" href="{{ asset('assets/extensions/table-datatables/style.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- dripicons -->
+    <link rel="stylesheet" href="{{ asset('assets/extensions/@icon/dripicons/dripicons.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/compiled/css/ui-icons-dripicons.css') }}">
+    
     <style>
         .brand-link {
             font-weight: bold;
@@ -36,6 +41,11 @@
              
             }
         }
+
+        #presence {
+            height: 330px;
+        }
+
     </style>
 
 
@@ -259,6 +269,9 @@
     <!-- Required for handling datatables -->
     <script src="{{ asset('assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
     <script src="{{ asset('assets/static/js/pages/simple-datatables.js') }}"></script>
+
+    <!-- Required for handling chartJS -->
+    <script src="{{ asset('assets/extensions/chart.js/chart.umd.js') }}"></script>
     
     <!-- Required for date -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -313,19 +326,120 @@
     @endif
 
     // handling for net salary
-            function calculateNetSalary() {
+    function calculateNetSalary() {
                 let salary = parseFloat(document.querySelector('input[name="salary"]').value) || 0;
-            let bonuses = parseFloat(document.querySelector('input[name="bonuses"]').value) || 0;
-            let deductions = parseFloat(document.querySelector('input[name="deductions"]').value) || 0;
+                let bonuses = parseFloat(document.querySelector('input[name="bonuses"]').value) || 0;
+                let deductions = parseFloat(document.querySelector('input[name="deductions"]').value) || 0;
 
-            let net = salary + bonuses - deductions;
+                let net = salary + bonuses - deductions;
+                document.getElementById('net_salary').value = net;
+            }
 
-            document.getElementById('net_salary').value = net;
-    }
+        const salaryInput = document.querySelector('input[name="salary"]');
+        const bonusesInput = document.querySelector('input[name="bonuses"]');
+        const deductionsInput = document.querySelector('input[name="deductions"]');
 
-            document.querySelector('input[name="salary"]').addEventListener('input', calculateNetSalary);
-            document.querySelector('input[name="bonuses"]').addEventListener('input', calculateNetSalary);
-            document.querySelector('input[name="deductions"]').addEventListener('input', calculateNetSalary);
+        if (salaryInput) salaryInput.addEventListener('input', calculateNetSalary);
+        if (bonusesInput) bonusesInput.addEventListener('input', calculateNetSalary);
+        if (deductionsInput) deductionsInput.addEventListener('input', calculateNetSalary);
+
+
+    // handling chart
+
+    var ctxBar = document.getElementById('presence').getContext('2d');
+        var myBar = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ],
+                datasets: [{
+                    label: 'Total',
+                    data: [],
+                    backgroundColor: 'rgba(63, 82, 227, 0.85)',
+                    borderColor: 'rgba(63, 82, 227, 1)',
+                    borderWidth: 1,
+                    borderRadius: 8,   // rounded bar
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 20,
+                        right: 10,
+                        left: 10,
+                        bottom: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: '#cfd8dc', // warna legend
+                            boxWidth: 12,
+                            padding: 20
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Latest Presence',
+                        color: '#cfd8dc',
+                        font: {
+                            size: 16,
+                            weight: '600'
+                        },
+                        padding: {
+                            bottom: 10
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        cornerRadius: 6,
+                        padding: 10
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#b0bec5'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255,255,255,0.06)'
+                        },
+                        ticks: {
+                            color: '#b0bec5',
+                            stepSize: 2
+                        }
+                    }
+                }
+            }
+        });
+
+
+        function updateData() {
+            fetch('/dashboard/presence')
+                .then(res => res.json())
+                .then(output => {
+                    myBar.data.labels = output.labels;
+                    myBar.data.datasets[0].data = output.data;
+                    myBar.update();
+                });
+        }
+
+        updateData();
 
 
     </script>

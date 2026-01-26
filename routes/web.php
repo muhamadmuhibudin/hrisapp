@@ -12,13 +12,14 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\LeaveRequestController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('dashboard');
 });
 
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/presence', [DashboardController::class, 'presence']);
 
     // Tasks
     Route::resource('/tasks', TaskController::class)

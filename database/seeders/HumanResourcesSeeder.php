@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 
 class HumanResourcesSeeder extends Seeder
@@ -156,26 +157,34 @@ class HumanResourcesSeeder extends Seeder
         ]);
 
         // Presences
-        DB::table('presences')->insert([
-            [
-                'employee_id' => 1,
-                'check_in' => '2026-01-01 08:00:00',
-                'check_out' => '2026-01-01 16:00:00',
-                'date' => '2026-01-01',
-                'status' => 'present',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'employee_id' => 2,
-                'check_in' => '2026-01-01 08:00:00',
-                'check_out' => '2026-01-01 16:00:00',
-                'date' => '2026-01-01',
-                'status' => 'present',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+        $presences = [];
+
+        for ($month = 1; $month <= 12; $month++) {
+            for ($day = 1; $day <= 10; $day++) {
+                $date = Carbon::create(2026, $month, rand(1, 28))->format('Y-m-d');
+
+                $hour = rand(7, 9);
+                $minute = rand(0, 59);
+
+                $checkIn = Carbon::parse($date)->setTime($hour, $minute)->format('Y-m-d H:i:s');
+                $checkOut = Carbon::parse($checkIn)->addHours(9)->format('Y-m-d H:i:s');
+
+                foreach ([1, 2, 3] as $employeeId) {
+                    $presences[] = [
+                        'employee_id' => $employeeId,
+                        'check_in' => $checkIn,
+                        'check_out' => $checkOut,
+                        'date' => $date,
+                        'status' => 'present',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+        }
+
+        DB::table('presences')->insert($presences);
+
 
         // Leave Requests
         DB::table('leave_requests')->insert([

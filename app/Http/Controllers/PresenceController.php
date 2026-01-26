@@ -43,6 +43,7 @@ class PresenceController extends Controller
             Presence::create([
                 'employee_id' => Auth::user()->employee_id,
                 'check_in' => Carbon::now()->format('Y-m-d H:i:s'),
+                'check_out' => Carbon::now()->addHours(9)->format('Y-m-d H:i:s'),
                 'latitude' => $request->latitude,
                 'longitude' => $request->longitude,
                 'date' => Carbon::now()->format('Y-m-d'),
@@ -51,7 +52,7 @@ class PresenceController extends Controller
         }
 
         return redirect()->route('presences.index')
-            ->with('success', 'Presence recorded successfully.');
+            ->with('success', 'Presence recorded successfully, Check out will be auto recorded after 9 hours.');
     }
 
 

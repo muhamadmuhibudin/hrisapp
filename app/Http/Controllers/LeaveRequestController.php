@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\LeaveRequest;
 use App\Models\Employee;
 
@@ -11,7 +12,7 @@ class LeaveRequestController extends Controller
     public function index()
     {
         if (session('role') == 'Employee') {
-            $leaveRequests = leaveRequest::where('employee_id', session('employee_id'))->get();
+            $leaveRequests = LeaveRequest::where('employee_id', session('employee_id'))->get();
         } else {
             $leaveRequests = LeaveRequest::all();
         }

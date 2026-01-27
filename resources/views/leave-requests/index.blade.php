@@ -56,63 +56,67 @@
                         </thead>
                         <tbody>
                             @foreach($leaveRequests as $leaveRequest)
+                                @php
+                                    $status = strtolower($leaveRequest->status);
+                                    $displayStatus = ucfirst($status);
+                                    $role = Auth::user()->employee?->role?->title;
+                                @endphp
+
                                 <tr>
                                     <td>{{ $leaveRequest->employee->fullname }}</td>
                                     <td>{{ $leaveRequest->reason }}</td>
                                     <td>{{ $leaveRequest->start_date }}</td>
                                     <td>{{ $leaveRequest->end_date }}</td>
-                                    <td>
-                                        @php
-                                            $status = ucfirst($leaveRequest->status);
-                                            $rawStatus = strtolower($leaveRequest->status);
-                                        @endphp
 
-                                        @if($leaveRequest->status === 'pending')
-                                            <span class="badge bg-warning">{{ $status }}</span>
-                                        @elseif($leaveRequest->status === 'rejected')
-                                            <span class="badge bg-danger">{{ $status }}</span>
-                                        @elseif($leaveRequest->status === 'confirmed')
-                                            <span class="badge bg-success">{{ $status }}</span>
+                                    <!-- STATUS -->
+                                    <td>
+                                        @if($status === 'pending')
+                                            <span class="badge bg-warning">{{ $displayStatus }}</span>
+                                        @elseif($status === 'rejected')
+                                            <span class="badge bg-danger">{{ $displayStatus }}</span>
+                                        @elseif($status === 'confirmed')
+                                            <span class="badge bg-success">{{ $displayStatus }}</span>
                                         @endif
                                     </td>
 
+                                    <!-- ACTIONS -->
                                     <td class="d-flex justify-content-between">
-                                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
+
+                                        @if(in_array($role, ['Super Admin', 'HR Manager']))
                                             <div>
-                                                @if($leaveRequest->status === 'Pending')
+                                                @if($status === 'pending')
                                                     <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
                                                         class="btn btn-sm btn-success">Confirm</a>
                                                     <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
                                                         class="btn btn-sm btn-warning">Reject</a>
-                                                @elseif($leaveRequest->status === 'Confirmed')
+
+                                                @elseif($status === 'confirmed')
                                                     <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
                                                         class="btn btn-sm btn-warning">Reject</a>
-                                                @elseif($leaveRequest->status === 'Rejected')
+
+                                                @elseif($status === 'rejected')
                                                     <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
                                                         class="btn btn-sm btn-success">Confirm</a>
                                                 @endif
                                             </div>
 
                                             <div>
-                                                <a href="{{ route('leave-requests.edit', $leaveRequest->id) }}"
-                                                    class="btn btn-sm btn-primary">Edit</a>
+                                                <a href="{{ route('leave-requests.edit', $leaveRequest->id) }}" class="btn btn-sm btn-primary">Edit</a>
 
-                                                <form action="{{ route('leave-requests.destroy', $leaveRequest->id) }}"
-                                                    method="POST" class="d-inline delete-form">
+                                                <form action="{{ route('leave-requests.destroy', $leaveRequest->id) }}" method="POST"
+                                                    class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                                 </form>
                                             </div>
                                         @endif
+
                                     </td>
-
-
                                 </tr>
-
                             @endforeach
-
                         </tbody>
+
                     </table>
                 </div>
             </div>

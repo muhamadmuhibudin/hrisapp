@@ -20,4 +20,6 @@ COPY . .
 
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-CMD php artisan serve --host=0.0.0.0 --port=$(expr $PORT + 0)
+RUN chmod -R 777 storage bootstrap/cache
+
+CMD php -S 0.0.0.0:${PORT} -t public

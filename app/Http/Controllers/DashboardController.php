@@ -42,13 +42,16 @@ class DashboardController extends Controller
         ));
     }
 
+    // for handling chart in dashboard presence this year
+
     public function presence()
     {
-        $end = Carbon::now();
-        $start = $end->copy()->subMonths(11)->startOfMonth();
+        $year = Carbon::now()->year;
+        $start = Carbon::create($year, 1, 1)->startOfMonth();
+        $end = Carbon::create($year, 12, 31)->endOfMonth();
 
         $data = Presence::where('status', 'present')
-            ->whereBetween('date', [$start, $end])
+            ->whereYear('date', $year)
             ->selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total')
             ->groupBy('month')
             ->orderBy('month')
@@ -68,5 +71,34 @@ class DashboardController extends Controller
             'data' => $result
         ]);
     }
+
+    // for handling chart in dashboard presence last 12 months
+
+    // public function presence()
+    // {
+    //     $end = Carbon::now();
+    //     $start = $end->copy()->subMonths(11)->startOfMonth();
+
+    //     $data = Presence::where('status', 'present')
+    //         ->whereBetween('date', [$start, $end])
+    //         ->selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total')
+    //         ->groupBy('month')
+    //         ->orderBy('month')
+    //         ->pluck('total', 'month');
+
+    //     $result = [];
+    //     $labels = [];
+
+    //     for ($i = 0; $i < 12; $i++) {
+    //         $m = $start->copy()->addMonths($i)->format('Y-m');
+    //         $labels[] = $start->copy()->addMonths($i)->format('M Y');
+    //         $result[] = $data[$m] ?? 0;
+    //     }
+
+    //     return response()->json([
+    //         'labels' => $labels,
+    //         'data' => $result
+    //     ]);
+    // }
 
 }

@@ -1,53 +1,29 @@
 # HRIS (Human Resource Information System)
 
-## Overview
-HRIS is a Human Resource Information System built using Laravel 12 to help organizations manage employee data, tasks, attendance, payroll, and leave requests in a single integrated platform.
+> A portfolio project simulating a real-world HRIS used in modern companies.
+> 🔗 Live Demo: https://hris.up.railway.app
 
-The application supports two types of users: **Admin (HR)** and **Employee**, each with different access levels and features. This project was developed as a Fullstack Developer portfolio, focusing on real-world HR business processes and clean implementation using Laravel best practices.
+
+## Overview
+HRIS is a Human Resource Information System built with Laravel 12 to manage employee data, tasks, attendance, payroll, and leave requests in one integrated platform.
+
+The application supports **Super Admin**, **HR**, and **Employee** roles with different access levels and workflows. This project was developed as a Fullstack Developer portfolio, focusing on real-world HR business processes and Laravel best practices.
+
+The application follows production-ready practices including role-based authorization, structured database design, and scalable architecture.
+
+---
 
 ## Key Features
 
-### Authentication and Authorization
-- User authentication (login and logout)
-- Role-based access control (Admin and Employee)
-- Middleware for access restriction based on user roles
+- Authentication & role-based authorization (Super Admin, HR, Employee)
+- Employee, department, and role management (CRUD)
+- Task assignment and status tracking
+- Attendance (presence) management and recap
+- Payroll management with salary calculation and salary slip
+- Leave request workflow with approval and status tracking
+- Dashboard with summary data, charts, and recent activities
 
-### Employee Management
-- Create, read, update, and delete employee data
-- Employee detail view
-- Relationship between employees, departments, and roles
-
-### Department and Role Management
-- Department management (CRUD)
-- Role management (CRUD)
-- Organizational structure grouping
-
-### Task Management
-- Task management by Admin
-- Task assignment to employees
-- Task status updates (Pending, In Progress, Completed)
-- Separate task views for Admin and Employee
-
-### Presence (Attendance)
-- Employee attendance records
-- Update and delete attendance data
-- Attendance recap
-
-### Payroll Management
-- Payroll management (CRUD)
-- Salary calculation
-- Salary slip view
-- Payroll access restricted by user role
-
-### Leave Request
-- Leave request submission by employees
-- Approval or rejection by Admin
-- Leave request status tracking
-
-### Dashboard
-- Summary of total data
-- Latest tasks overview
-- Attendance statistics chart
+---
 
 ## Tech Stack
 
@@ -66,8 +42,10 @@ The application supports two types of users: **Admin (HR)** and **Employee**, ea
 - Flatpickr
 - Chart.js
 
+---
+
 ## Database Design
-The database structure was designed using an ERD before implementation.  
+The database was designed using an ERD before implementation.  
 Main tables include:
 - users
 - employees
@@ -78,60 +56,87 @@ Main tables include:
 - payrolls
 - leave_requests
 
+---
+
 ## Installation Guide
 
-1. Clone Repository
-bash 
+
+```bash
 git clone https://github.com/muhamadmuhibudin/hrisapp.git
 cd hrisapp
 
-2. Install Dependencies
 composer install
 npm install
 npm run dev
 
-3. Environment Setup
 cp .env.example .env
 php artisan key:generate
-Configure the database credentials in the .env file.
 
-4. Migration and Seeding
 php artisan migrate --seed
-
-5. Run Application
 php artisan serve
+```
 
+The application will be available at:  
+http://localhost:8000
 
-The application will be available at http://localhost:8000 after setup.
+---
 
-## Demo Account
-*(To be configured after installation)*
+## Demo Accounts
 
-**Admin**  
-- Email: admin@example.com  
-- Password: password
+### Super Admin
+- Email: `superadmin@example.com`
+- Password: `password`
 
-**Employee**  
-- Email: employee@example.com  
-- Password: password
+### HR
+- Email: `hr@example.com`
+- Password: `password`
 
-## What This Project Demonstrates
-- End-to-end HRIS implementation  
-- Fullstack development using Laravel  
-- Role-based authorization  
-- Relational database management  
-- Separation of features between Admin and Employee roles
+### Employee
+- Email: `employee@example.com`
+- Password: `password`
+
+---
+
+## Purpose of This Project
+
+- Demonstrates fullstack web development skills  
+- Implements real-world HR business workflows  
+- Applies role-based authorization and access control  
+- Uses relational database design and deployment-ready architecture  
+
+---
+
+## Remote Readiness
+
+- Clean and maintainable Laravel project structure
+- Clear role-based access control and authorization flow
+- Database designed with scalability in mind
+- Ready for API extension and SPA/mobile integration
+- Deployed and tested in a cloud environment
+
+---
 
 ## Future Improvements
-- Export payroll as PDF  
-- Email notifications  
-- REST API implementation  
-- Unit and feature testing
+
+- Add unit & feature tests to improve code quality and reliability  
+- Implement REST API endpoints for SPA or mobile app integration  
+- Add email notifications for HR workflows (leave approval, payroll, etc.)  
+- Improve UI/UX with better loading and empty states  
+- Add activity logs for important HR actions  
+- Support data export (CSV/Excel) for reports  
+- Implement Super Admin approval for user registration, including role assignment and user activation  
+- Strengthen authorization using Laravel Policies and Gates for better access control  
+
+---
 
 ## Author
-Muhammad Muhibbudin  
+
+**Muhammad Muhibbudin**  
 Fullstack Web Developer
 
+---
+
 ## Notes for Recruiter
-This project simulates a real-world HRIS commonly used in companies. It was developed with a structured approach following Laravel best practices, with a focus on business logic, access control, and maintainable code.
->>>>>>> 14de12303f07172bd06e8d6769659a0764b3a7c9
+
+This project simulates a real-world HRIS commonly used in companies.  
+It was developed with a structured approach following Laravel best practices, with a focus on business logic, access control, and maintainable code.

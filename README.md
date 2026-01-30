@@ -1,7 +1,7 @@
 # HRIS (Human Resource Information System)
 
 > A portfolio project simulating a real-world HRIS used in modern companies.
-> 🔗 Live Demo: https://hris.up.railway.app
+> 🔗 Live Demo: https://hrisapp.up.railway.app
 
 
 ## Overview

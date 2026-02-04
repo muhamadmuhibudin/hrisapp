@@ -53,34 +53,41 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($employees as $employees)
+                            @forelse($employees as $employee)
                                 <tr>
-                                    <td>{{ $employees->fullname }}</td>
-                                    <td>{{ $employees->email }}</td>
-                                    <td>{{ $employees->department->name }}</td>
-                                    <td>{{ $employees->role->title }}</td>
+                                    <td>{{ $employee->fullname }}</td>
+                                    <td>{{ $employee->email }}</td>
+                                    <td>{{ $employee->department->name }}</td>
+                                    <td>{{ $employee->role->title }}</td>
                                     <td>
-                                        @if($employees->status == 'active')
-                                            <span class="badge bg-warning">{{ ucfirst($employees->status) }}</span>
+                                        @if($employee->status == 'active')
+                                            <span class="badge bg-warning">{{ ucfirst($employee->status) }}</span>
                                         @else
-                                            <span class="badge bg-info">{{ ucfirst($employees->status) }}</span>
+                                            <span class="badge bg-info">{{ ucfirst($employee->status) }}</span>
                                         @endif
                                     </td>
-                                    <td>{{ number_format($employees->salary) }}</td>
+                                    <td>{{ number_format($employee->salary) }}</td>
 
                                     <td class="d-flex justify-content-between gap-1">
-                                        <a href="{{ route('employees.show', $employees->id) }}" class="btn btn-info btn-sm btn-primary" rel="noopener noreferrer">View</a>
-                                        <a href="{{ route('employees.edit', $employees->id) }}" class="btn btn-warning btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('employees.destroy', $employees->id) }}" method="POST" class="d-inline delete-form">
+                                        <a href="{{ route('employees.show', $employee->id) }}"
+                                            class="btn btn-info btn-sm btn-primary" rel="noopener noreferrer">View</a>
+                                        <a href="{{ route('employees.edit', $employee->id) }}"
+                                            class="btn btn-warning btn-sm btn-primary">Edit</a>
+                                        <form action="{{ route('employees.destroy', $employee->id) }}" method="POST"
+                                            class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
-
-                            @endforeach
-
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-gray-500 py-10">
+                                        No employee records found.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

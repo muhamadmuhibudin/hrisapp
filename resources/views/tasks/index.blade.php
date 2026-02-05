@@ -54,7 +54,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($tasks as $task)
+                            @forelse($tasks as $task)
                                 <tr>
                                     <td>{{ $task->title }}</td>
                                     <td>{{ $task->employee->fullname }}</td>
@@ -73,30 +73,32 @@
                                             <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-sm btn-info">View</a>
 
                                             @if($task->status == 'pending')
-                                                <a href="{{ route('tasks.done', $task->id) }}" class="btn btn-sm btn-success">Mark as done</a>
+                                                <a href="{{ route('tasks.done', $task->id) }}" class="btn btn-sm btn-success">Mark as Done</a>
                                             @else
                                                 <a href="{{ route('tasks.pending', $task->id) }}" class="btn btn-sm btn-warning">Mark as Pending</a>
                                             @endif
                                         </div>
 
                                         @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
+                                            <div>
+                                                <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
-                                        <div>
-                                            <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning">Edit</a>
-
-                                            <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                            </form>
-                                        </div>
-
+                                                <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                </form>
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>
-
-                            @endforeach
-
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-gray-500 py-10">
+                                        No tasks available.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

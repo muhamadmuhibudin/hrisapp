@@ -49,15 +49,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($roles as $role)
+                            @forelse($roles as $role)
                                 <tr>
                                     <td>{{ $role->title }}</td>
                                     <td>{{ $role->description }}</td>
                                     <td class="d-flex justify-content-between gap-1">
                                         <div>
-                                            <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{{ route('roles.edit', $role->id) }}"
+                                                class="btn btn-sm btn-warning">Edit</a>
 
-                                            <form action="{{ route('roles.destroy', $role->id) }}" method="POST" class="d-inline delete-form">
+                                            <form action="{{ route('roles.destroy', $role->id) }}" method="POST"
+                                                class="d-inline delete-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
@@ -65,9 +67,13 @@
                                         </div>
                                     </td>
                                 </tr>
-
-                            @endforeach
-
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center text-gray-500 py-10">
+                                        No roles defined.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

@@ -54,7 +54,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($presences as $presence)
+                            @forelse($presences as $presence)
                                 <tr>
                                     <td>{{ $presence->employee->fullname }}</td>
                                     <td>{{ $presence->check_in }}</td>
@@ -71,20 +71,25 @@
                                     <td class="d-flex justify-content-between gap-1">
                                         <div>
                                             @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
-                                            <a href="{{ route('presences.edit', $presence->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                                <a href="{{ route('presences.edit', $presence->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
-                                            <form action="{{ route('presences.destroy', $presence->id) }}" method="POST" class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                            </form>
+                                                <form action="{{ route('presences.destroy', $presence->id) }}" method="POST"
+                                                    class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                </form>
                                             @endif
                                         </div>
                                     </td>
                                 </tr>
-
-                            @endforeach
-
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-gray-500 py-10">
+                                        No presence records found.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

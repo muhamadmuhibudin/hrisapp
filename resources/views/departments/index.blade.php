@@ -50,23 +50,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($departments as $department)
+                            @forelse($departments as $department)
                                 <tr>
                                     <td>{{ $department->name }}</td>
                                     <td>{{ $department->description }}</td>
                                     <td>
                                         @if($department->status == 'inactive')
                                             <span class="badge bg-warning">{{ $department->status }}</span>
-                                        @else($department->status == 'active')
+                                        @else
                                             <span class="badge bg-success">{{ $department->status }}</span>
                                         @endif
                                     </td>
                                     <td class="d-flex justify-content-between gap-1">
-
                                         <div>
                                             <a href="{{ route('departments.edit', $department->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
-                                            <form action="{{ route('departments.destroy', $department->id) }}" method="POST" class="d-inline delete-form">
+                                            <form action="{{ route('departments.destroy', $department->id) }}" method="POST"
+                                                class="d-inline delete-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
@@ -74,9 +74,13 @@
                                         </div>
                                     </td>
                                 </tr>
-
-                            @endforeach
-
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-gray-500 py-10">
+                                        No departments found.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

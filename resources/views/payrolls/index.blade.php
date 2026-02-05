@@ -55,7 +55,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($payrolls as $payroll)
+                            @forelse($payrolls as $payroll)
                                 <tr>
                                     <td>{{ $payroll->employee->fullname }}</td>
                                     <td>{{ number_format($payroll->salary) }}</td>
@@ -69,20 +69,24 @@
                                             <a href="{{ route('payrolls.show', $payroll->id) }}" class="btn btn-sm btn-info">Salary Slip</a>
 
                                             @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
-                                            <a href="{{ route('payrolls.edit', $payroll->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                                <a href="{{ route('payrolls.edit', $payroll->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
-                                            <form action="{{ route('payrolls.destroy', $payroll->id) }}" method="POST" class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                            </form>
+                                                <form action="{{ route('payrolls.destroy', $payroll->id) }}" method="POST" class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                </form>
                                             @endif
                                         </div>
                                     </td>
                                 </tr>
-
-                            @endforeach
-
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-gray-500 py-10">
+                                        No payroll records found.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

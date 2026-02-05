@@ -55,7 +55,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($leaveRequests as $leaveRequest)
+                            @forelse($leaveRequests as $leaveRequest)
                                 @php
                                     $status = strtolower($leaveRequest->status);
                                     $displayStatus = ucfirst($status);
@@ -81,7 +81,6 @@
 
                                     <!-- ACTIONS -->
                                     <td class="d-flex justify-content-between">
-
                                         @if(in_array($role, ['Super Admin', 'HR Manager']))
                                             <div>
                                                 @if($status === 'pending')
@@ -89,11 +88,9 @@
                                                         class="btn btn-sm btn-success">Confirm</a>
                                                     <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
                                                         class="btn btn-sm btn-warning">Reject</a>
-
                                                 @elseif($status === 'confirmed')
                                                     <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
                                                         class="btn btn-sm btn-warning">Reject</a>
-
                                                 @elseif($status === 'rejected')
                                                     <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
                                                         class="btn btn-sm btn-success">Confirm</a>
@@ -111,10 +108,15 @@
                                                 </form>
                                             </div>
                                         @endif
-
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-gray-500 py-10">
+                                        No leave requests found.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
 
                     </table>

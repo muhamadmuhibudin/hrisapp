@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/iconly.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/extensions/simple-datatables/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/extensions/table-datatables/style.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('assets/extensions/table-datatables/style.css') }}"> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
@@ -264,7 +264,6 @@
     
     <!-- Need: Apexcharts -->
     <script src="{{ asset('assets/extensions/apexcharts/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('assets/static/js/pages/dashboard.js') }}"></script>
     
     <!-- Required for handling datatables -->
     <script src="{{ asset('assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
@@ -346,6 +345,8 @@
 
     // handling chart
 
+    const presenceCanvas = document.getElementById('presence');
+        if (presenceCanvas) {
     var ctxBar = document.getElementById('presence').getContext('2d');
         var myBar = new Chart(ctxBar, {
             type: 'bar',
@@ -360,7 +361,7 @@
                     backgroundColor: 'rgba(63, 82, 227, 0.85)',
                     borderColor: 'rgba(63, 82, 227, 1)',
                     borderWidth: 1,
-                    borderRadius: 8,   // rounded bar
+                    borderRadius: 8,  
                     borderSkipped: false
                 }]
             },
@@ -379,7 +380,7 @@
                     legend: {
                         display: true,
                         labels: {
-                            color: '#cfd8dc', // warna legend
+                            color: '#cfd8dc', 
                             boxWidth: 12,
                             padding: 20
                         }
@@ -428,7 +429,6 @@
             }
         });
 
-
         function updateData() {
             fetch('/dashboard/presence')
                 .then(res => res.json())
@@ -440,9 +440,13 @@
         }
 
         updateData();
-
+    }
 
     </script>
+
+    <!-- Handling loading state -->
+    
+    @yield('scripts')
 
 </body>
 

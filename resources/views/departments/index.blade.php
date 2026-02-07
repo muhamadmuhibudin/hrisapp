@@ -40,7 +40,13 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    <table class="table table-striped" id="table1">
+                    <div id="loading" class="loading-state text-center py-10">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <table id="table1" class="table table-striped data-table" style="display:none;">
                         <thead>
                             <tr>
                                 <th>Name</th>

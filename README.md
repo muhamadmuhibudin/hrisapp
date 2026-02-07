@@ -116,16 +116,27 @@ http://localhost:8000
 
 ---
 
+## System Design Highlights
+
+- Controlled user registration with Super Admin approval and role assignment
+
+- Clear role-based access control (Super Admin, HR, Employee)
+
+- Business logic structured for maintainability and future scaling
+
+- Designed for auditability, background jobs, and API expansion
+
+---
+
 ## Future Improvements
 
-- Add unit & feature tests to improve code quality and reliability  
-- Implement REST API endpoints for SPA or mobile app integration  
-- Add email notifications for HR workflows (leave approval, payroll, etc.)  
-- Improve UI/UX with better loading and empty states  
-- Add activity logs for important HR actions  
-- Support data export (CSV/Excel) for reports  
-- Implement Super Admin approval for user registration, including role assignment and user activation  
-- Strengthen authorization using Laravel Policies and Gates for better access control  
+- Audit and activity logging for critical HR actions
+
+- Soft delete with restore and scheduled permanent deletion
+
+- REST API for SPA or mobile integration
+
+- Feature and authorization tests for critical workflows
 
 ---
 

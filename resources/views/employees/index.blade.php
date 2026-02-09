@@ -78,16 +78,22 @@
                                     <td>{{ number_format($employee->salary) }}</td>
 
                                     <td class="d-flex justify-content-between gap-1">
-                                        <a href="{{ route('employees.show', $employee->id) }}"
-                                            class="btn btn-info btn-sm btn-primary" rel="noopener noreferrer">View</a>
-                                        <a href="{{ route('employees.edit', $employee->id) }}"
-                                            class="btn btn-warning btn-sm btn-primary">Edit</a>
-                                        <form action="{{ route('employees.destroy', $employee->id) }}" method="POST"
-                                            class="d-inline delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                        </form>
+                                        @can('view', $employee)
+                                            <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-info btn-sm btn-primary"
+                                                rel="noopener noreferrer">View</a>
+                                        @endcan
+
+                                        @can('update', $employee)
+                                            <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-warning btn-sm btn-primary">Edit</a>
+                                        @endcan
+
+                                        @can('delete', $employee)
+                                            <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="d-inline delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                            </form>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

@@ -33,20 +33,18 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex">
-                        <a href="{{ route('departments.create') }}" class="btn btn-primary mb-3 ms-auto">New Department</a>
+                        @can('create', App\Models\Department::class)
+                            <a href="{{ route('departments.create') }}" class="btn btn-primary mb-3 ms-auto">New Department</a>
+                        @endcan
                     </div>
+
                     @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
                         </div>
                     @endif
-                    <div id="loading" class="loading-state text-center py-10">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
 
-                    <table id="table1" class="table table-striped data-table" style="display:none;">
+                    <table id="table1" class="table table-striped data-table">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -67,16 +65,21 @@
                                             <span class="badge bg-success">{{ $department->status }}</span>
                                         @endif
                                     </td>
-                                    <td class="d-flex justify-content-between gap-1">
-                                        <div>
-                                            <a href="{{ route('departments.edit', $department->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            @can('update', $department)
+                                                <a href="{{ route('departments.edit', $department->id) }}"
+                                                    class="btn btn-sm btn-warning">Edit</a>
+                                            @endcan
 
-                                            <form action="{{ route('departments.destroy', $department->id) }}" method="POST"
-                                                class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                            </form>
+                                            @can('delete', $department)
+                                                <form action="{{ route('departments.destroy', $department->id) }}" method="POST"
+                                                    class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                </form>
+                                            @endcan
                                         </div>
                                     </td>
                                 </tr>
@@ -91,7 +94,7 @@
                     </table>
                 </div>
             </div>
-
         </section>
+
     </div>
 @endsection

@@ -33,7 +33,9 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex">
-                        <a href="{{ route('roles.create') }}" class="btn btn-primary mb-3 ms-auto">New Role</a>
+                        @can('create', App\Models\Role::class)
+                            <a href="{{ route('roles.create') }}" class="btn btn-primary mb-3 ms-auto">New Role</a>
+                        @endcan
                     </div>
                     @if(session('success'))
                         <div class="alert alert-success">
@@ -60,19 +62,22 @@
                                 <tr>
                                     <td>{{ $role->title }}</td>
                                     <td>{{ $role->description }}</td>
-                                    <td class="d-flex justify-content-between gap-1">
-                                        <div>
-                                            <a href="{{ route('roles.edit', $role->id) }}"
-                                                class="btn btn-sm btn-warning">Edit</a>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            @can('update', $role)
+                                                <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            @endcan
 
-                                            <form action="{{ route('roles.destroy', $role->id) }}" method="POST"
-                                                class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                            </form>
+                                            @can('delete', $role)
+                                                <form action="{{ route('roles.destroy', $role->id) }}" method="POST" class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                </form>
+                                            @endcan
                                         </div>
                                     </td>
+
                                 </tr>
                             @empty
                                 <tr>

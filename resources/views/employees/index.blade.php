@@ -33,7 +33,10 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex">
-                        <a href="{{ route('employees.create') }}" class="btn btn-primary mb-3 ms-auto">New Employee</a>
+                        @can('create', App\Models\Employee::class)
+                            <a href="{{ route('employees.create') }}" class="btn btn-primary mb-3 ms-auto">New Employee</a>
+                        @endcan
+
                     </div>
                     @if(session('success'))
                         <div class="alert alert-success">
@@ -77,24 +80,26 @@
                                     </td>
                                     <td>{{ number_format($employee->salary) }}</td>
 
-                                    <td class="d-flex justify-content-between gap-1">
-                                        @can('view', $employee)
-                                            <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-info btn-sm btn-primary"
-                                                rel="noopener noreferrer">View</a>
-                                        @endcan
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            @can('view', $employee)
+                                                <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-info btn-sm">View</a>
+                                            @endcan
 
-                                        @can('update', $employee)
-                                            <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-warning btn-sm btn-primary">Edit</a>
-                                        @endcan
+                                            @can('update', $employee)
+                                                <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                            @endcan
 
-                                        @can('delete', $employee)
-                                            <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                            </form>
-                                        @endcan
+                                            @can('delete', $employee)
+                                                <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                </form>
+                                            @endcan
+                                        </div>
                                     </td>
+
                                 </tr>
                             @empty
                                 <tr>

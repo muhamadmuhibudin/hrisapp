@@ -33,9 +33,9 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex">
-                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
-                        <a href="{{ route('tasks.create') }}" class="btn btn-primary mb-3 ms-auto">New Task</a>
-                        @endif
+                        @can('create', App\Models\Task::class)
+                            <a href="{{ route('tasks.create') }}" class="btn btn-primary mb-3 ms-auto">New Task</a>
+                        @endcan
                     </div>
 
                     @if(session('success'))
@@ -75,29 +75,37 @@
                                             <span class="badge bg-info">{{ $task->status }}</span>
                                         @endif
                                     </td>
-                                    <td class="d-flex justify-content-between gap-1">
-                                        <div>
-                                            <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-sm btn-info">View</a>
+                                    <td>
+                                        <div class="d-flex justify-content-between gap-2">
+                                            <div class="d-flex gap-1">
 
-                                            @if($task->status == 'pending')
-                                                <a href="{{ route('tasks.done', $task->id) }}" class="btn btn-sm btn-success">Mark as Done</a>
-                                            @else
-                                                <a href="{{ route('tasks.pending', $task->id) }}" class="btn btn-sm btn-warning">Mark as Pending</a>
-                                            @endif
-                                        </div>
+                                                @can('view', $task)
+                                                    <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-sm btn-info">View</a>
+                                                @endcan
 
-                                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
-                                            <div>
-                                                <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning">Edit</a>
-
-                                                <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="d-inline delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                                </form>
+                                                @if($task->status == 'pending')
+                                                    <a href="{{ route('tasks.done', $task->id) }}" class="btn btn-sm btn-success">Mark as Done</a>
+                                                @else
+                                                    <a href="{{ route('tasks.pending', $task->id) }}" class="btn btn-sm btn-warning">Mark as Pending</a>
+                                                @endif
                                             </div>
-                                        @endif
+
+                                            <div class="d-flex gap-1">
+                                                @can('update', $task)
+                                                    <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                                @endcan
+
+                                                @can('delete', $task)
+                                                    <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="d-inline delete-form">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                    </form>
+                                                @endcan
+                                            </div>
+                                        </div>
                                     </td>
+
                                 </tr>
                             @empty
                                 <tr>

@@ -11,12 +11,13 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $role = Auth::user()->employee?->role?->title;
+        $this->authorize('viewAny', Task::class);
 
-        if (in_array($role, ['Super Admin', 'HR Manager'])) {
+        $user = Auth::user();
+        if ($user->role_id === 1 || $user->role_id === 2) {
             $tasks = Task::all();
         } else {
-            $tasks = Task::where('assigned_to', Auth::user()->employee_id)->get();
+            $tasks = Task::where('assigned_to', $user->employee_id)->get();
         }
 
         return view('tasks.index', compact('tasks'));
@@ -24,72 +25,76 @@ class TaskController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Task::class);
         $employees = Employee::all();
         return view('tasks.create', compact('employees'));
     }
 
-    public function store (Request $request) 
+    public function store(Request $request)
     {
-
-    $validated = $request->validate ([
-        'title' => 'required|string|max:255|unique:tasks,title',
-        'description' => 'nullable|string',
-        'assigned_to' => 'required|exists:employees,id',
-        'due_date' => 'required|date',
-        'status' => 'required|string',
-    ]);
-
-    // if validation passes, create the task
-
-    Task::create($validated);
-    return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
-
-    }
-
-    public function edit(Task $task) {
-        $employees = Employee::all();
-        return view('tasks.edit', compact('task', 'employees'));
-    }
-
-    public function show(Task $task) {
-        return view('tasks.show', compact('task'));
-    }
-
-    public function update(Request $request, Task $task)
-    {
+        $this->authorize('create', Task::class);
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:tasks,title',
             'description' => 'nullable|string',
             'assigned_to' => 'required|exists:employees,id',
             'due_date' => 'required|date',
             'status' => 'required|string',
         ]);
 
-        // if validation passes, update the task
+        Task::create($validated);
+        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+    }
+
+    public function show(Task $task)
+    {
+        $this->authorize('view', $task);
+        return view('tasks.show', compact('task'));
+    }
+
+    public function edit(Task $task)
+    {
+        $this->authorize('update', $task);
+        $employees = Employee::all();
+        return view('tasks.edit', compact('task', 'employees'));
+    }
+
+    public function update(Request $request, Task $task)
+    {
+        $this->authorize('update', $task);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255|unique:tasks,title,' . $task->id,
+            'description' => 'nullable|string',
+            'assigned_to' => 'required|exists:employees,id',
+            'due_date' => 'required|date',
+            'status' => 'required|string',
+        ]);
 
         $task->update($validated);
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
-
-    }
-
-    public function done(int $id) {
-        $task = Task::find($id);
-        $task->update(['status' => 'done']);
-        return redirect()->route('tasks.index')->with('success', 'Task marked as done.');
-    }
-
-    public function pending(int $id) {
-        $task = Task::find($id);
-        $task->update(['status' => 'pending']);
-        return redirect()->route('tasks.index')->with('success', 'Task marked as pending.');
     }
 
     public function destroy(Task $task)
     {
+        $this->authorize('delete', $task);
         $task->delete();
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
     }
 
-}
+    public function done(int $id)
+    {
+        $task = Task::findOrFail($id);
+        $this->authorize('update', $task);
+        $task->update(['status' => 'done']);
+        return redirect()->route('tasks.index')->with('success', 'Task marked as done.');
+    }
 
+    public function pending(int $id)
+    {
+        $task = Task::findOrFail($id);
+        $this->authorize('update', $task);
+        $task->update(['status' => 'pending']);
+        return redirect()->route('tasks.index')->with('success', 'Task marked as pending.');
+    }
+}

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,26 +11,32 @@ use Carbon\Carbon;
 
 class PresenceController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Presence::class, 'presence');
+    }
+
     public function index()
     {
-        if(session('role') == 'Employee'){
-            $presences = Presence::where('employee_id', session('employee_id'))->get();
+        if (Auth::user()->role_id === 3) { // Employee
+            $presences = Presence::where('employee_id', Auth::user()->employee_id)->get();
         } else {
             $presences = Presence::all();
         }
-       return view('presences.index', compact('presences'));
+        return view('presences.index', compact('presences'));
     }
 
     public function create()
-    {   $employees = Employee::all();
+    {
+        $employees = Employee::all();
         return view('presences.create', compact('employees'));
     }
 
     public function store(Request $request)
     {
-        $role = Auth::user()->employee?->role?->title;
+        $this->authorize('create', Presence::class);
 
-        if (in_array($role, ['Super Admin', 'HR Manager'])) {
+        if (Auth::user()->role_id === 1 || Auth::user()->role_id === 2) { // Super Admin / HR
             $request->validate([
                 'check_in' => 'required',
                 'check_out' => 'required',
@@ -39,7 +46,7 @@ class PresenceController extends Controller
             ]);
 
             Presence::create($request->all());
-        } else {
+        } else { // Employee
             Presence::create([
                 'employee_id' => Auth::user()->employee_id,
                 'check_in' => Carbon::now()->format('Y-m-d H:i:s'),
@@ -55,12 +62,11 @@ class PresenceController extends Controller
             ->with('success', 'Presence recorded successfully, Check out will be auto recorded after 9 hours.');
     }
 
-
-    public function edit(Presence $presence) 
+    public function edit(Presence $presence)
     {
         $employees = Employee::all();
         return view('presences.edit', compact('presence', 'employees'));
-    } 
+    }
 
     public function update(Request $request, Presence $presence)
     {
@@ -75,14 +81,13 @@ class PresenceController extends Controller
         $presence->update($request->all());
 
         return redirect()->route('presences.index')
-                         ->with('success', 'Presence updated successfully.');
+            ->with('success', 'Presence updated successfully.');
     }
 
-    public function destroy (Presence $presence) 
+    public function destroy(Presence $presence)
     {
         $presence->delete();
         return redirect()->route('presences.index')
-                         ->with('success', 'Presence deleted successfully.');
+            ->with('success', 'Presence deleted successfully.');
     }
-
 }

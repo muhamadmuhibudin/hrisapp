@@ -32,9 +32,9 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex">
+                    @can('create', App\Models\Presence::class)
                         <a href="{{ route('presences.create') }}" class="btn btn-primary mb-3 ms-auto">New Presence</a>
-                    </div>
+                    @endcan
                     @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
@@ -77,18 +77,20 @@
 
                                     <td class="d-flex justify-content-between gap-1">
                                         <div>
-                                            @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
+                                            @can('update', $presence)
                                                 <a href="{{ route('presences.edit', $presence->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            @endcan
 
-                                                <form action="{{ route('presences.destroy', $presence->id) }}" method="POST"
-                                                    class="d-inline delete-form">
+                                            @can('delete', $presence)
+                                                <form action="{{ route('presences.destroy', $presence->id) }}" method="POST" class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                                                 </form>
-                                            @endif
+                                            @endcan
                                         </div>
                                     </td>
+
                                 </tr>
                             @empty
                                 <tr>

@@ -61,7 +61,7 @@
 
                         <div class="mb-3">
                             <label for="salary" class="form-label">Salary</label>
-                            <input type="number" class="form-control @e`rror('salary') is-invalid @enderror" name="salary"
+                            <input type="number" class="form-control @error('salary') is-invalid @enderror" name="salary"
                                 value="{{ old('salary', $payroll->salary) }}" required>
                             @error('salary')
                                 <div class="invalid-feedback">{{ $message }}</div>

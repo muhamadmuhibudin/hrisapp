@@ -53,7 +53,7 @@ class HumanResourcesSeeder extends Seeder
             ]
         );
         DB::table('roles')->updateOrInsert(
-            ['title' => 'HR'],
+            ['title' => 'HR Manager'],
             [
                 'description' => 'Manage employees & payroll',
                 'created_at' => now(),

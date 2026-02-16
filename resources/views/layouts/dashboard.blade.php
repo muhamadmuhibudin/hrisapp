@@ -169,7 +169,7 @@
 
                         @endif
 
-                        @if(in_array(Auth::user()->employee?->role?->title, ['Developer', 'Sales', 'Supervisor', 'Employee']))
+                        @if(in_array(Auth::user()->employee?->role?->title, ['Employee']))
 
                             <li class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                                 <a href="/dashboard" class="sidebar-link">

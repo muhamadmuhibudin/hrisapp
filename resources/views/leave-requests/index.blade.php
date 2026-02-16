@@ -34,8 +34,9 @@
                 <div class="card-body">
                     <div class="d-flex">
                         @can('create', App\Models\LeaveRequest::class)
-                        <a href="{{ route('leave-requests.create') }}" class="btn btn-primary mb-3 ms-auto">New Leave Request</a>
-                    @endcan
+                            <a href="{{ route('leave-requests.create') }}" class="btn btn-primary mb-3 ms-auto">New Leave
+                                Request</a>
+                        @endcan
                     </div>
                     @if(session('success'))
                         <div class="alert alert-success">
@@ -50,7 +51,7 @@
                     </div>
 
                     <table id="table1" class="table table-striped data-table" style="display:none;">
-                      <thead>
+                        <thead>
                             <tr>
                                 <th>Employee</th>
                                 <th>Reason</th>
@@ -64,59 +65,65 @@
                         </thead>
                         <tbody>
                             @forelse($leaveRequests as $leaveRequest)
-                                                                                                                                                                            @php
-                                $status = strtolower($leaveRequest->status);
-                                $displayStatus = ucfirst($status);
-                                $role = Auth::user()->employee?->role?->title;
-                                                                                                                                                                            @endphp
+                                @php
+                                    $status = strtolower($leaveRequest->status);
+                                    $displayStatus = ucfirst($status);
+                                    $role = Auth::user()->employee?->role?->title;
+                                @endphp
 
-                                                                                                                                                                            <tr>
-                                                                                                                                                                                <td>{{ $leaveRequest->employee->fullname }}</td>
-                                                                                                                                                                                <td>{{ $leaveRequest->reason }}</td>
-                                                                                                                                                                                <td>{{ $leaveRequest->start_date }}</td>
-                                                                                                                                                                                <td>{{ $leaveRequest->end_date }}</td>
+                                <tr>
+                                    <td>{{ $leaveRequest->employee->fullname }}</td>
+                                    <td>{{ $leaveRequest->reason }}</td>
+                                    <td>{{ $leaveRequest->start_date }}</td>
+                                    <td>{{ $leaveRequest->end_date }}</td>
 
-                                                                                                                                                                                <!-- STATUS -->
-                                                                                                                                                                                <td>
-                                                                                                                                                                                    @if($status === 'pending')
-                                                                                                                                                                                        <span class="badge bg-warning">{{ $displayStatus }}</span>
-                                                                                                                                                                                    @elseif($status === 'rejected')
-                                                                                                                                                                                        <span class="badge bg-danger">{{ $displayStatus }}</span>
-                                                                                                                                                                                    @elseif($status === 'confirmed')
-                                                                                                                                                                                        <span class="badge bg-success">{{ $displayStatus }}</span>
-                                                                                                                                                                                    @endif
-                                                                                                                                                                                </td>
+                                    <!-- STATUS -->
+                                    <td>
+                                        @if($status === 'pending')
+                                            <span class="badge bg-warning">{{ $displayStatus }}</span>
+                                        @elseif($status === 'rejected')
+                                            <span class="badge bg-danger">{{ $displayStatus }}</span>
+                                        @elseif($status === 'confirmed')
+                                            <span class="badge bg-success">{{ $displayStatus }}</span>
+                                        @endif
+                                    </td>
 
-                                                                                                                                                                                <!-- ACTIONS -->
-                                                                                                                                                                            <td class="d-flex justify-content-between">
-                                                                                                                                                                                <div class="d-flex gap-1">
-                                                                                                                                                                                    @can('confirm', $leaveRequest)
-                                                                                                                                                                                        @if($status === 'pending')
-                                                                                                                                                                                            <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}" class="btn btn-sm btn-success">Confirm</a>
-                                                                                                                                                                                            <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}" class="btn btn-sm btn-warning">Reject</a>
-                                                                                                                                                                                        @elseif($status === 'confirmed')
-                                                                                                                                                                                            <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}" class="btn btn-sm btn-warning">Reject</a>
-                                                                                                                                                                                        @elseif($status === 'rejected')
-                                                                                                                                                                                            <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}" class="btn btn-sm btn-success">Confirm</a>
-                                                                                                                                                                                        @endif
-                                                                                                                                                                                    @endcan
-                                                                                                                                                                                </div>
+                                    <!-- ACTIONS -->
+                                    <td class="d-flex justify-content-between">
+                                        <div class="d-flex gap-1">
+                                            @can('confirm', $leaveRequest)
+                                                @if($status === 'pending')
+                                                    <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
+                                                        class="btn btn-sm btn-success">Confirm</a>
+                                                    <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
+                                                        class="btn btn-sm btn-warning">Reject</a>
+                                                @elseif($status === 'confirmed')
+                                                    <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
+                                                        class="btn btn-sm btn-warning">Reject</a>
+                                                @elseif($status === 'rejected')
+                                                    <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
+                                                        class="btn btn-sm btn-success">Confirm</a>
+                                                @endif
+                                            @endcan
+                                        </div>
 
-                                                                                                                                                                                <div class="d-flex gap-1">
-                                                                                                                                                                                    @can('update', $leaveRequest)
-                                                                                                                                                                                        <a href="{{ route('leave-requests.edit', $leaveRequest->id) }}" class="btn btn-sm btn-primary">Edit</a>
-                                                                                                                                                                                    @endcan
+                                        <div class="d-flex gap-1">
+                                            @can('update', $leaveRequest)
+                                                <a href="{{ route('leave-requests.edit', $leaveRequest->id) }}"
+                                                    class="btn btn-sm btn-primary">Edit</a>
+                                            @endcan
 
-                                                                                                                                                                                    @can('delete', $leaveRequest)
-                                                                                                                                                                                        <form action="{{ route('leave-requests.destroy', $leaveRequest->id) }}" method="POST" class="d-inline delete-form">
-                                                                                                                                                                                            @csrf
-                                                                                                                                                                                            @method('DELETE')
-                                                                                                                                                                                            <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                                                                                                                                                                        </form>
-                                                                                                                                                                                    @endcan
-                                                                                                                                                                                </div>
-                                                                                                                                                                            </td>
-                                                                                                                                                                            </tr>
+                                            @can('delete', $leaveRequest)
+                                                <form action="{{ route('leave-requests.destroy', $leaveRequest->id) }}"
+                                                    method="POST" class="d-inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                                </form>
+                                            @endcan
+                                        </div>
+                                    </td>
+                                </tr>
                             @empty
                                 <tr>
                                     <td colspan="6" class="text-center text-gray-500 py-10">

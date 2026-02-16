@@ -33,9 +33,9 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex">
-                        @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
-                        <a href="{{ route('payrolls.create') }}" class="btn btn-primary mb-3 ms-auto">New Payroll</a>
-                        @endif
+                        @can('create', App\Models\Payroll::class)
+                            <a href="{{ route('payrolls.create') }}" class="btn btn-primary mb-3 ms-auto">New Payroll</a>
+                        @endcan
                     </div>
                     @if(session('success'))
                         <div class="alert alert-success">
@@ -75,15 +75,17 @@
                                         <div>
                                             <a href="{{ route('payrolls.show', $payroll->id) }}" class="btn btn-sm btn-info">Salary Slip</a>
 
-                                            @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
+                                            @can('update', $payroll)
                                                 <a href="{{ route('payrolls.edit', $payroll->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            @endcan
 
+                                            @can('delete', $payroll)
                                                 <form action="{{ route('payrolls.destroy', $payroll->id) }}" method="POST" class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button" class="btn btn-sm btn-danger btn-delete">Delete</button>
                                                 </form>
-                                            @endif
+                                            @endcan
                                         </div>
                                     </td>
                                 </tr>

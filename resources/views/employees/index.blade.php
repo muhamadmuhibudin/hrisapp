@@ -69,8 +69,8 @@
                                 <tr>
                                     <td>{{ $employee->fullname }}</td>
                                     <td>{{ $employee->email }}</td>
-                                    <td>{{ $employee->department->name }}</td>
-                                    <td>{{ $employee->role->title }}</td>
+                                    <td>{{ $employee->department?->name ?? '-' }}</td>
+                                    <td>{{ $employee->role?->title ?? '-' }}</td>
                                     <td>
                                         @if($employee->status == 'active')
                                             <span class="badge bg-warning">{{ ucfirst($employee->status) }}</span>

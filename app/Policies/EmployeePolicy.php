@@ -7,59 +7,70 @@ use App\Models\User;
 
 class EmployeePolicy
 {
-    private function isSuperAdmin(User $user): bool
+    /**
+     * Perform pre-authorization checks.
+     * Super Admin bypasses all specific policy checks.
+     */
+    public function before(User $user, string $ability): ?bool
     {
-        return $user->role_id === 1;
-    }
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
 
-    private function isHR(User $user): bool
-    {
-        return $user->role_id === 2;
-    }
-
-    private function isEmployee(User $user): bool
-    {
-        return $user->role_id === 3;
+        return null; 
     }
 
     public function viewAny(User $user): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function view(User $user, Employee $employee): bool
     {
-        if ($this->isSuperAdmin($user) || $this->isHR($user)) {
-            return true;
-        }
-        return $this->isEmployee($user) && $user->employee_id === $employee->id;
+        // HR can view any profile, Employees can only view their own profile
+        return $this->isHR($user) || (int) $user->employee_id === (int) $employee->id;
     }
 
     public function create(User $user): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function update(User $user, Employee $employee): bool
     {
-        if ($this->isSuperAdmin($user) || $this->isHR($user)) {
-            return true;
-        }
-        return $this->isEmployee($user) && $user->employee_id === $employee->id;
+        // HR can update any profile, Employees can only update their own profile
+        return $this->isHR($user) || (int) $user->employee_id === (int) $employee->id;
     }
 
     public function delete(User $user, Employee $employee): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function restore(User $user, Employee $employee): bool
     {
-        return $this->isSuperAdmin($user);
+        return false;
     }
 
     public function forceDelete(User $user, Employee $employee): bool
     {
-        return $this->isSuperAdmin($user);
+        return false;
+    }
+
+    // --- Role Helper Methods ---
+
+    private function isSuperAdmin(User $user): bool
+    {
+        return (int) $user->role_id === 1;
+    }
+
+    private function isHR(User $user): bool
+    {
+        return (int) $user->role_id === 2;
+    }
+
+    private function isEmployee(User $user): bool
+    {
+        return (int) $user->role_id === 3;
     }
 }

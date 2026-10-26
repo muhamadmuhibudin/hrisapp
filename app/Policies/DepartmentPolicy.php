@@ -7,48 +7,63 @@ use App\Models\User;
 
 class DepartmentPolicy
 {
-    private function isSuperAdmin(User $user): bool
+    /**
+     * Perform pre-authorization checks.
+     * Super Admin bypasses all specific policy checks.
+     */
+    public function before(User $user, string $ability): ?bool
     {
-        return $user->role_id === 1;
-    }
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
 
-    private function isHR(User $user): bool
-    {
-        return $user->role_id === 2;
+        return null; 
     }
 
     public function viewAny(User $user): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function view(User $user, Department $department): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function create(User $user): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function update(User $user, Department $department): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function delete(User $user, Department $department): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function restore(User $user, Department $department): bool
     {
-        return $this->isSuperAdmin($user);
+        return false;
     }
 
     public function forceDelete(User $user, Department $department): bool
     {
-        return $this->isSuperAdmin($user);
+        return false;
+    }
+
+    // --- Role Helper Methods ---
+
+    private function isSuperAdmin(User $user): bool
+    {
+        return (int) $user->role_id === 1;
+    }
+
+    private function isHR(User $user): bool
+    {
+        return (int) $user->role_id === 2;
     }
 }

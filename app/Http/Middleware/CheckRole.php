@@ -6,38 +6,42 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Employee;
+
 class CheckRole
 {
     /**
-     * Handle an incoming request.
+     * Handle an incoming request and verify user roles.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string...$roles): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        $employeeID = auth()->user()->employee_id;
-        $employee = Employee::find($employeeID);
-
-        $request->session()->put("role", $employee->role->title);
-        $request->session()->put("employee_id", $employee->id);
-
-        if(!in_array($employee->role->title, $roles)){
-            abort(403,'Unauthorized Action');
+        // 1. Ensure the user is fully authenticated before querying
+        if (!auth()->check()) {
+            return redirect()->route('login');
         }
 
-        // $user = auth()->user();
-        // if (!$user) {
-        //     return redirect('/login');
-        // }
+        // 2. Retrieve employee with eager loading to prevent N+1 query issues
+        $employee = Employee::with('role')->find(auth()->user()->employee_id);
 
-        // $employee = Employee::where('user_id', $user->id)->first();
-        // if (!$employee) {
-        //     return redirect('/login');
-        // }
+        // 3. Gracefully handle edge cases where employee or role data is missing
+        if (!$employee || !$employee->role) {
+            abort(403, 'Unauthorized Action: Role configuration is missing.');
+        }
 
-        // if (!in_array($employee->role, $roles)) {
-        //     abort(403);
-        // }
+        // Standardize role title to lowercase for comparison
+        $currentRole = strtolower($employee->role->title);
+
+        // 4. Store session data (useful for global Blade checks)
+        $request->session()->put('role', $currentRole);
+        $request->session()->put('employee_id', $employee->id);
+
+        // 5. Perform a case-insensitive check against the allowed roles
+        $allowedRoles = array_map('strtolower', $roles);
+
+        if (!in_array($currentRole, $allowedRoles)) {
+            abort(403, 'Unauthorized Action: Insufficient permissions.');
+        }
 
         return $next($request);
     }

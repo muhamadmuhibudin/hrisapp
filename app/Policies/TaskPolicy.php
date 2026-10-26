@@ -4,53 +4,72 @@ namespace App\Policies;
 
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TaskPolicy
 {
-
-    private function isSuperAdmin(User $user): bool
+    /**
+     * Perform pre-authorization checks.
+     * Super Admin bypasses all specific policy checks.
+     */
+    public function before(User $user, string $ability): ?bool
     {
-        return $user->role_id === 1;
-    }
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
 
-    private function isHR(User $user): bool
-    {
-        return $user->role_id === 2;
+        return null;
     }
 
     public function viewAny(User $user): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user) || $user->role_id === 3;
+        return $this->isHR($user) || $this->isEmployee($user);
     }
 
     public function view(User $user, Task $task): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user) || (int) $task->assigned_to === (int) $user->employee_id;
+        // HR can view any task, Employees can only view tasks assigned to them
+        return $this->isHR($user) || (int) $task->assigned_to === (int) $user->employee_id;
     }
 
     public function create(User $user): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function update(User $user, Task $task): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function delete(User $user, Task $task): bool
     {
-        return $this->isSuperAdmin($user) || $this->isHR($user);
+        return $this->isHR($user);
     }
 
     public function restore(User $user, Task $task): bool
     {
-        return $this->isSuperAdmin($user);
+        return false; // Handled by before() method. Only Super Admin can restore.
     }
 
     public function forceDelete(User $user, Task $task): bool
     {
-        return $this->isSuperAdmin($user);
+        return false; // Handled by before() method. Only Super Admin can force delete.
+    }
+
+    // --- Role Helper Methods ---
+
+    private function isSuperAdmin(User $user): bool
+    {
+        return (int) $user->role_id === 1;
+    }
+
+    private function isHR(User $user): bool
+    {
+        return (int) $user->role_id === 2;
+    }
+
+    private function isEmployee(User $user): bool
+    {
+        return (int) $user->role_id === 3;
     }
 }

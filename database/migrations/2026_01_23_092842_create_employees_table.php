@@ -23,10 +23,17 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+        });
     }
 
     public function down(): void
     {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['employee_id']);
+        });
         Schema::dropIfExists('employees');
     }
 };

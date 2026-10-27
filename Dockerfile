@@ -29,4 +29,4 @@ RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoload
 
 RUN chmod -R 775 storage bootstrap/cache
 
-CMD php -S 0.0.0.0:${PORT:-8080} -t public
+CMD php artisan optimize:clear && php artisan config:cache && php -S 0.0.0.0:${PORT:-8080} -t public

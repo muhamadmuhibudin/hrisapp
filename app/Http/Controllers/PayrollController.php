@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Payroll;
 use App\Models\Employee;
+use App\Models\Presence;
+use Carbon\Carbon;
 
 class PayrollController extends Controller
 {
     public function __construct()
     {
-        // Binding ke PayrollPolicy
+        // Bind the controller to the PayrollPolicy for automated authorization checks
         $this->authorizeResource(Payroll::class, 'payroll');
     }
 
@@ -19,6 +21,7 @@ class PayrollController extends Controller
     {
         $user = Auth::user();
 
+        // Admins and HR Managers have full visibility; regular employees only see their own records
         if ($user->role_id === 1 || $user->role_id === 2) { 
             $payrolls = Payroll::with('employee')->get();
         } else {
@@ -33,8 +36,8 @@ class PayrollController extends Controller
     public function create()
     {
         $this->authorize('create', Payroll::class);
-
         $employees = Employee::all();
+        
         return view('payrolls.create', compact('employees'));
     }
 
@@ -42,41 +45,67 @@ class PayrollController extends Controller
     {
         $this->authorize('create', Payroll::class);
 
+        // Enforce strict numeric validation to prevent malicious input manipulation
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'salary' => 'required|numeric',
-            'bonuses' => 'required|numeric',
-            'deductions' => 'required|numeric',
-            'pay_date' => 'required|date',
+            'salary'      => 'required|numeric|min:0',
+            'bonuses'     => 'required|numeric|min:0',
+            'deductions'  => 'required|numeric|min:0',
+            'pay_date'    => 'required|date',
         ]);
 
-        $netSalary = $request->salary - $request->deductions + $request->bonuses;
+        // Automatically calculate absence deductions based on the current month's presence records
+        $payDate      = Carbon::parse($request->pay_date);
+        $startOfMonth = $payDate->copy()->startOfMonth()->format('Y-m-d');
+        $endOfMonth   = $payDate->copy()->endOfMonth()->format('Y-m-d');
+
+        // Assuming a standard 22-day working month for absence penalty calculation
+        $workingDays = 22; 
+        
+        $presentDays = Presence::where('employee_id', $request->employee_id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->where('status', 'present')
+            ->count();
+
+        $absentDays = $workingDays - $presentDays;
+        
+        // Apply a base penalty for each day absent (e.g., IDR 100,000 / day)
+        $absencePenalty = ($absentDays > 0) ? ($absentDays * 100000) : 0;
+        
+        // Combine manual deductions with system-calculated absence penalties
+        $totalDeductions = $request->deductions + $absencePenalty;
+
+        // Prevent net salary from falling below zero due to excessive deductions
+        $netSalary = $request->salary - $totalDeductions + $request->bonuses;
+        if ($netSalary < 0) {
+            $netSalary = 0;
+        }
 
         Payroll::create([
             'employee_id' => $request->employee_id,
-            'salary' => $request->salary,
-            'bonuses' => $request->bonuses,
-            'deductions' => $request->deductions,
-            'net_salary' => $netSalary,
-            'pay_date' => $request->pay_date,
+            'salary'      => $request->salary,
+            'bonuses'     => $request->bonuses,
+            'deductions'  => $totalDeductions,
+            'net_salary'  => $netSalary,
+            'pay_date'    => $request->pay_date,
         ]);
 
         return redirect()->route('payrolls.index')
-            ->with('success', 'Payroll created successfully.');
+            ->with('success', "Payroll created. Auto-deduction for {$absentDays} absent days applied.");
     }
 
     public function show(Payroll $payroll)
     {
         $this->authorize('view', $payroll);
-
+        
         return view('payrolls.show', compact('payroll'));
     }
 
     public function edit(Payroll $payroll)
     {
         $this->authorize('update', $payroll);
-
         $employees = Employee::all();
+        
         return view('payrolls.edit', compact('payroll', 'employees'));
     }
 
@@ -86,21 +115,23 @@ class PayrollController extends Controller
 
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'salary' => 'required|numeric',
-            'bonuses' => 'required|numeric',
-            'deductions' => 'required|numeric',
-            'pay_date' => 'required|date',
+            'salary'      => 'required|numeric|min:0',
+            'bonuses'     => 'required|numeric|min:0',
+            'deductions'  => 'required|numeric|min:0',
+            'pay_date'    => 'required|date',
         ]);
 
+        // Prevent negative values when HR manually overrides the payroll record
         $netSalary = $request->salary - $request->deductions + $request->bonuses;
+        $netSalary = max(0, $netSalary);
 
         $payroll->update([
             'employee_id' => $request->employee_id,
-            'salary' => $request->salary,
-            'bonuses' => $request->bonuses,
-            'deductions' => $request->deductions,
-            'net_salary' => $netSalary,
-            'pay_date' => $request->pay_date,
+            'salary'      => $request->salary,
+            'bonuses'     => $request->bonuses,
+            'deductions'  => $request->deductions,
+            'net_salary'  => $netSalary,
+            'pay_date'    => $request->pay_date,
         ]);
 
         return redirect()->route('payrolls.index')
@@ -110,7 +141,6 @@ class PayrollController extends Controller
     public function destroy(Payroll $payroll)
     {
         $this->authorize('delete', $payroll);
-
         $payroll->delete();
 
         return redirect()->route('payrolls.index')

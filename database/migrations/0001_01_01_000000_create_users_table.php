@@ -18,15 +18,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->foreignId('employee_id')
-                ->nullable()
-                ->constrained('employees')
-                ->onDelete('cascade');
-
-            $table->foreignId('role_id')
-                ->default(3) // default Employee
-                ->constrained('roles')
-                ->onDelete('cascade');
+            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->unsignedBigInteger('role_id')->default(3); // default Employee
             $table->timestamps();
         });
 

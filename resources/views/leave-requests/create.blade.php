@@ -31,6 +31,21 @@
                         Create
                     </h5>
                 </div>
+
+                <!-- Alert Messages -->
+                    @if (session('success'))
+                        <div style="color: green; padding: 10px; border: 1px solid green; margin-bottom: 15px;">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div style="color: red; padding: 10px; border: 1px solid red; margin-bottom: 15px;">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    
                 <div class="card-body">
 
                     @if($errors->any())

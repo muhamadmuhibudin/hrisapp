@@ -38,9 +38,16 @@
                                 Request</a>
                         @endcan
                     </div>
-                    @if(session('success'))
-                        <div class="alert alert-success">
+                     <!-- Alert Messages -->
+                    @if (session('success'))
+                        <div style="color: green; padding: 10px; border: 1px solid green; margin-bottom: 15px;">
                             {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div style="color: red; padding: 10px; border: 1px solid red; margin-bottom: 15px;">
+                            {{ session('error') }}
                         </div>
                     @endif
 

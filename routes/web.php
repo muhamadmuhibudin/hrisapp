@@ -39,6 +39,9 @@ Route::middleware(['auth'])->group(function () {
         
         Route::get('leave-requests/confirm/{id}', [LeaveRequestController::class, 'confirm'])->name('leave-requests.confirm');
         Route::get('leave-requests/reject/{id}', [LeaveRequestController::class, 'reject'])->name('leave-requests.reject');
+
+        // payroll export
+        Route::get('/payrolls/export', [App\Http\Controllers\PayrollController::class, 'export'])->name('payrolls.export');
     });
 
     // --- 3. Shared Area (All Roles) ---

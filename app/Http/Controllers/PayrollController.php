@@ -138,6 +138,53 @@ class PayrollController extends Controller
             ->with('success', 'Payroll updated successfully.');
     }
 
+    public function export()
+    {
+        // Only Admins (1) and HR Managers (2) are authorized to export payroll data
+        if (Auth::user()->role_id === 3) {
+            abort(403, 'Unauthorized action. Only HR and Admin can export data.');
+        }
+
+        $payrolls = Payroll::with('employee')->get();
+        $fileName = 'payroll_report_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        // Define CSV header columns
+        $columns = ['Payroll ID', 'Employee Name', 'Basic Salary', 'Bonuses', 'Deductions', 'Net Salary', 'Pay Date'];
+
+        // Use stream callback to efficiently process large datasets without memory leaks
+        $callback = function () use ($payrolls, $columns) {
+            $file = fopen('php://output', 'w');
+            fputs($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, $columns, ';');
+
+            foreach ($payrolls as $payroll) {
+                $employee = $payroll->employee;
+                $employeeName = $employee ? ($employee->fullname ?? $employee->full_name ?? 'No Name') : 'Unknown Employee';
+                
+                fputcsv($file, [
+                    $payroll->id,
+                    $employeeName,
+                    $payroll->salary,
+                    $payroll->bonuses,
+                    $payroll->deductions,
+                    $payroll->net_salary,
+                    $payroll->pay_date,
+                ], ';');
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function destroy(Payroll $payroll)
     {
         $this->authorize('delete', $payroll);

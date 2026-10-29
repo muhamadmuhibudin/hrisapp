@@ -37,6 +37,14 @@
                             <a href="{{ route('payrolls.create') }}" class="btn btn-primary mb-3 ms-auto">New Payroll</a>
                         @endcan
                     </div>
+                    <div class="mb-3">
+                        <a href="{{ route('payrolls.create') }}" class="btn btn-primary">Create New Payroll</a>
+                        
+                        <!-- Export button only for Admin and HR -->
+                        @if(auth()->user()->role_id === 1 || auth()->user()->role_id === 2)
+                            <a href="{{ route('payrolls.export') }}" class="btn btn-success">Export to CSV</a>
+                        @endif
+                    </div>
                     @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}

@@ -31,6 +31,15 @@ class ActivityLogController extends Controller
 
         $users = User::orderBy('name')->get(['id', 'name']);
 
+        $stats = [
+            'total' => ActivityLog::count(),
+            'today' => ActivityLog::whereDate('created_at', today())->count(),
+            'payroll' => ActivityLog::where('action', 'like', 'payroll.%')->count(),
+            'leave' => ActivityLog::where('action', 'like', 'leave.%')->count(),
+        ];
+
+        return view('activity-logs.index', compact('logs', 'users', 'stats'));
+
         return view('activity-logs.index', compact('logs', 'users'));
     }
 }

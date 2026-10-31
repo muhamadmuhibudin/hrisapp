@@ -7,6 +7,40 @@
     </div>
 
     <section class="section">
+        <div class="row mb-3">
+            <div class="col-6 col-lg-3">
+                <div class="card mb-2">
+                    <div class="card-body px-4 py-3">
+                        <h6 class="text-muted font-semibold mb-1">Total Logs</h6>
+                        <h4 class="font-extrabold mb-0">{{ number_format($stats['total']) }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card mb-2">
+                    <div class="card-body px-4 py-3">
+                        <h6 class="text-muted font-semibold mb-1">Today</h6>
+                        <h4 class="font-extrabold mb-0 text-primary">{{ number_format($stats['today']) }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card mb-2">
+                    <div class="card-body px-4 py-3">
+                        <h6 class="text-muted font-semibold mb-1">Payroll Actions</h6>
+                        <h4 class="font-extrabold mb-0 text-info">{{ number_format($stats['payroll']) }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="card mb-2">
+                    <div class="card-body px-4 py-3">
+                        <h6 class="text-muted font-semibold mb-1">Leave Actions</h6>
+                        <h4 class="font-extrabold mb-0 text-warning">{{ number_format($stats['leave']) }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="card-body">
                 <form method="GET" action="{{ route('activity-logs.index') }}" class="row g-2 mb-4">
@@ -17,6 +51,7 @@
                             <option value="leave" @selected(request('module') === 'leave')>Leave Requests</option>
                             <option value="employee" @selected(request('module') === 'employee')>Employees</option>
                             <option value="role" @selected(request('module') === 'role')>Roles</option>
+                            <option value="auth" @selected(request('module') === 'auth')>Authentication</option>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -55,7 +90,7 @@
                                 <tr>
                                     <td>{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
                                     <td>{{ $log->user?->name ?? 'System' }}</td>
-                                    <td><span class="badge bg-info">{{ $log->action }}</span></td>
+                                    <td><span class="badge {{ $log->badge_class }}">{{ $log->action }}</span></td>
                                     <td>{{ $log->description }}</td>
                                     <td><code>{{ $log->ip_address }}</code></td>
                                 </tr>

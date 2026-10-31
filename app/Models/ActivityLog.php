@@ -46,4 +46,24 @@ class ActivityLog extends Model
         return static::where('created_at', '<=', now()->subDays(360));
     }
 
+    public function getBadgeClassAttribute(): string
+    {
+        return match (true) {
+            str_ends_with($this->action, '.deleted'),
+            str_ends_with($this->action, '.rejected') => 'bg-danger',
+
+            str_ends_with($this->action, '.created'),
+            str_ends_with($this->action, '.confirmed'),
+            $this->action === 'auth.login' => 'bg-success',
+
+            str_ends_with($this->action, '.updated') => 'bg-warning text-dark',
+
+            str_ends_with($this->action, '.exported') => 'bg-primary',
+
+            $this->action === 'auth.logout' => 'bg-secondary',
+
+            default => 'bg-info',
+        };
+    }
+
 }

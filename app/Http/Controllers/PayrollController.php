@@ -23,7 +23,7 @@ class PayrollController extends Controller
         $user = Auth::user();
 
         // Admins and HR Managers have full visibility; regular employees only see their own records
-        if ($user->role_id === 1 || $user->role_id === 2) { 
+        if ($user->role_id === 1 || $user->role_id === 2) {
             $payrolls = Payroll::with('employee')->get();
         } else {
             $payrolls = Payroll::with('employee')
@@ -38,7 +38,7 @@ class PayrollController extends Controller
     {
         $this->authorize('create', Payroll::class);
         $employees = Employee::all();
-        
+
         return view('payrolls.create', compact('employees'));
     }
 
@@ -49,30 +49,30 @@ class PayrollController extends Controller
         // Enforce strict numeric validation to prevent malicious input manipulation
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'salary'      => 'required|numeric|min:0',
-            'bonuses'     => 'required|numeric|min:0',
-            'deductions'  => 'required|numeric|min:0',
-            'pay_date'    => 'required|date',
+            'salary' => 'required|numeric|min:0',
+            'bonuses' => 'required|numeric|min:0',
+            'deductions' => 'required|numeric|min:0',
+            'pay_date' => 'required|date',
         ]);
 
         // Automatically calculate absence deductions based on the current month's presence records
-        $payDate      = Carbon::parse($request->pay_date);
+        $payDate = Carbon::parse($request->pay_date);
         $startOfMonth = $payDate->copy()->startOfMonth()->format('Y-m-d');
-        $endOfMonth   = $payDate->copy()->endOfMonth()->format('Y-m-d');
+        $endOfMonth = $payDate->copy()->endOfMonth()->format('Y-m-d');
 
         // Assuming a standard 22-day working month for absence penalty calculation
-        $workingDays = 22; 
-        
+        $workingDays = 22;
+
         $presentDays = Presence::where('employee_id', $request->employee_id)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->where('status', 'present')
             ->count();
 
         $absentDays = $workingDays - $presentDays;
-        
+
         // Apply a base penalty for each day absent (e.g., IDR 100,000 / day)
         $absencePenalty = ($absentDays > 0) ? ($absentDays * 100000) : 0;
-        
+
         // Combine manual deductions with system-calculated absence penalties
         $totalDeductions = $request->deductions + $absencePenalty;
 
@@ -84,27 +84,21 @@ class PayrollController extends Controller
 
         Payroll::create([
             'employee_id' => $request->employee_id,
-            'salary'      => $request->salary,
-            'bonuses'     => $request->bonuses,
-            'deductions'  => $totalDeductions,
-            'net_salary'  => $netSalary,
-            'pay_date'    => $request->pay_date,
+            'salary' => $request->salary,
+            'bonuses' => $request->bonuses,
+            'deductions' => $totalDeductions,
+            'net_salary' => $netSalary,
+            'pay_date' => $request->pay_date,
         ]);
 
         return redirect()->route('payrolls.index')
             ->with('success', "Payroll created. Auto-deduction for {$absentDays} absent days applied.");
-
-        ActivityLog::record(
-            'payroll.created',
-            "Generated payroll #{$payroll->id} (Net: {$payroll->net_salary}) for employee ID {$payroll->employee_id}",
-            $payroll
-        );
     }
 
     public function show(Payroll $payroll)
     {
         $this->authorize('view', $payroll);
-        
+
         return view('payrolls.show', compact('payroll'));
     }
 
@@ -112,7 +106,7 @@ class PayrollController extends Controller
     {
         $this->authorize('update', $payroll);
         $employees = Employee::all();
-        
+
         return view('payrolls.edit', compact('payroll', 'employees'));
     }
 
@@ -122,10 +116,10 @@ class PayrollController extends Controller
 
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'salary'      => 'required|numeric|min:0',
-            'bonuses'     => 'required|numeric|min:0',
-            'deductions'  => 'required|numeric|min:0',
-            'pay_date'    => 'required|date',
+            'salary' => 'required|numeric|min:0',
+            'bonuses' => 'required|numeric|min:0',
+            'deductions' => 'required|numeric|min:0',
+            'pay_date' => 'required|date',
         ]);
 
         // Prevent negative values when HR manually overrides the payroll record
@@ -134,18 +128,12 @@ class PayrollController extends Controller
 
         $payroll->update([
             'employee_id' => $request->employee_id,
-            'salary'      => $request->salary,
-            'bonuses'     => $request->bonuses,
-            'deductions'  => $request->deductions,
-            'net_salary'  => $netSalary,
-            'pay_date'    => $request->pay_date,
+            'salary' => $request->salary,
+            'bonuses' => $request->bonuses,
+            'deductions' => $request->deductions,
+            'net_salary' => $netSalary,
+            'pay_date' => $request->pay_date,
         ]);
-
-        ActivityLog::record(
-            'payroll.updated',
-            "Updated payroll #{$payroll->id} (Net: {$payroll->net_salary}) for employee ID {$payroll->employee_id}",
-            $payroll
-        );
 
         return redirect()->route('payrolls.index')
             ->with('success', 'Payroll updated successfully.');
@@ -162,11 +150,11 @@ class PayrollController extends Controller
         $fileName = 'payroll_report_' . date('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
         ];
 
         // Define CSV header columns
@@ -181,7 +169,7 @@ class PayrollController extends Controller
             foreach ($payrolls as $payroll) {
                 $employee = $payroll->employee;
                 $employeeName = $employee ? ($employee->fullname ?? $employee->full_name ?? 'No Name') : 'Unknown Employee';
-                
+
                 fputcsv($file, [
                     $payroll->id,
                     $employeeName,
@@ -194,24 +182,18 @@ class PayrollController extends Controller
             }
             fclose($file);
         };
-        
+
         ActivityLog::record(
             'payroll.exported',
             'Exported payroll report to CSV'
         );
 
         return response()->stream($callback, 200, $headers);
-
     }
 
     public function destroy(Payroll $payroll)
     {
         $this->authorize('delete', $payroll);
-        ActivityLog::record(
-            'payroll.deleted',
-            "Deleted payroll #{$payroll->id} (Net: {$payroll->net_salary}) for employee ID {$payroll->employee_id}",
-            $payroll
-        );
         $payroll->delete();
 
         return redirect()->route('payrolls.index')

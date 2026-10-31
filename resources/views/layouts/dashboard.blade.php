@@ -167,6 +167,13 @@
                             </a>
                         </li>
 
+                        <li class="sidebar-item {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}">
+                            <a href="{{ route('activity-logs.index') }}" class="sidebar-link">
+                                <i class="bi bi-clock-history"></i>
+                                <span>Activity Logs</span>
+                            </a>
+                        </li>
+
                         @endif
 
                         @if(in_array(Auth::user()->employee?->role?->title, ['Employee']))

@@ -10,6 +10,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\ActivityLogController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -42,6 +43,9 @@ Route::middleware(['auth'])->group(function () {
 
         // payroll export
         Route::get('/payrolls/export', [App\Http\Controllers\PayrollController::class, 'export'])->name('payrolls.export');
+
+        // Activity Logs for Auditing
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
     });
 
     // --- 3. Shared Area (All Roles) ---

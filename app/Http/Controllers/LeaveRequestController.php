@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\LeaveRequest;
 use App\Models\Employee;
+use App\Models\ActivityLog;
 
 class LeaveRequestController extends Controller
 {
@@ -120,6 +121,12 @@ class LeaveRequestController extends Controller
 
         $leaveRequest->update($dataToUpdate);
 
+        ActivityLog::record(
+            'leave.updated',
+            "Updated leave request #{$leaveRequest->id} for {$leaveRequest->employee->fullname}",
+            $leaveRequest
+        );
+
         return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request updated successfully.');
     }
@@ -131,8 +138,15 @@ class LeaveRequestController extends Controller
 
         $leaveRequest->update(['status' => 'Confirmed']);
 
+        ActivityLog::record(
+            'leave.confirmed',
+            "Confirmed leave request #{$leaveRequest->id} for {$leaveRequest->employee->fullname}",
+            $leaveRequest
+        );
+
         return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request confirmed successfully.');
+
     }
 
     public function reject(int $id)
@@ -141,13 +155,25 @@ class LeaveRequestController extends Controller
         $this->authorize('reject', $leaveRequest);
 
         $leaveRequest->update(['status' => 'Rejected']);
+        
+        ActivityLog::record(
+            'leave.rejected',
+            "Rejected leave request #{$leaveRequest->id} for {$leaveRequest->employee->fullname}",
+            $leaveRequest
+        );
 
         return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request rejected successfully.');
+
     }
 
     public function destroy(LeaveRequest $leaveRequest)
     {
+        ActivityLog::record(
+            'leave.deleted',
+            "Deleted leave request #{$leaveRequest->id} for {$leaveRequest->employee->fullname}",
+            $leaveRequest
+        );
         $leaveRequest->delete();
 
         return redirect()->route('leave-requests.index')

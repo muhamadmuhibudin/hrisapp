@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Payroll;
 use App\Models\Employee;
 use App\Models\Presence;
+use App\Models\ActivityLog;
 use Carbon\Carbon;
 
 class PayrollController extends Controller
@@ -92,6 +93,12 @@ class PayrollController extends Controller
 
         return redirect()->route('payrolls.index')
             ->with('success', "Payroll created. Auto-deduction for {$absentDays} absent days applied.");
+
+        ActivityLog::record(
+            'payroll.created',
+            "Generated payroll #{$payroll->id} (Net: {$payroll->net_salary}) for employee ID {$payroll->employee_id}",
+            $payroll
+        );
     }
 
     public function show(Payroll $payroll)
@@ -133,6 +140,12 @@ class PayrollController extends Controller
             'net_salary'  => $netSalary,
             'pay_date'    => $request->pay_date,
         ]);
+
+        ActivityLog::record(
+            'payroll.updated',
+            "Updated payroll #{$payroll->id} (Net: {$payroll->net_salary}) for employee ID {$payroll->employee_id}",
+            $payroll
+        );
 
         return redirect()->route('payrolls.index')
             ->with('success', 'Payroll updated successfully.');
@@ -181,13 +194,24 @@ class PayrollController extends Controller
             }
             fclose($file);
         };
+        
+        ActivityLog::record(
+            'payroll.exported',
+            'Exported payroll report to CSV'
+        );
 
         return response()->stream($callback, 200, $headers);
+
     }
 
     public function destroy(Payroll $payroll)
     {
         $this->authorize('delete', $payroll);
+        ActivityLog::record(
+            'payroll.deleted',
+            "Deleted payroll #{$payroll->id} (Net: {$payroll->net_salary}) for employee ID {$payroll->employee_id}",
+            $payroll
+        );
         $payroll->delete();
 
         return redirect()->route('payrolls.index')

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -52,6 +53,12 @@ class RoleController extends Controller
 
         $role->update($validatedData);
 
+        ActivityLog::record(
+            'role.updated',
+            "Updated role #{$role->id} ({$role->title})",
+            $role
+        );
+
         return redirect()->route('roles.index')
             ->with('success', 'Role updated successfully.');
     }
@@ -59,6 +66,11 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $this->authorize('delete', $role);
+        ActivityLog::record(
+            'role.deleted',
+            "Deleted role #{$role->id} ({$role->title})",
+            $role
+        );
         $role->delete();
 
         return redirect()->route('roles.index')

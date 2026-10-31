@@ -7,6 +7,7 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\Role;
+use App\Models\ActivityLog;
 
 
 
@@ -86,6 +87,12 @@ class EmployeeController extends Controller
 
         $employee->update($validatedData);
 
+        ActivityLog::record(
+            'employee.updated',
+            "Updated employee profile/role for {$employee->fullname} (ID #{$employee->id})",
+            $employee
+        );
+
         return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
     }
 
@@ -93,6 +100,12 @@ class EmployeeController extends Controller
     {
         $employee = Employee::findOrFail($id);
         $this->authorize('delete', $employee);
+
+        ActivityLog::record(
+            'employee.deleted',
+            "Deleted employee {$employee->fullname} (ID #{$employee->id})",
+            $employee
+        );
 
         $employee->delete();
         return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');

@@ -39,7 +39,12 @@ class LeaveRequestPolicy
     public function update(User $user, LeaveRequest $leaveRequest): bool
     {
         // HR can update any request, Employees can only update their own (e.g., before it's approved)
-        return $this->isHR($user) || (int) $user->employee_id === (int) $leaveRequest->employee_id;
+        if (in_array($user->role_id, [1, 2])) {
+            return true;
+        }
+
+        return $user->employee_id === $leaveRequest->employee_id
+            && $leaveRequest->status === 'pending';
     }
 
     public function delete(User $user, LeaveRequest $leaveRequest): bool

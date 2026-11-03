@@ -82,7 +82,6 @@ class HrisBusinessLogicTest extends TestCase
     {
         LeaveRequest::create([
             'employee_id' => $this->employee->id,
-            'leave_type' => 'Annual Leave',
             'reason' => 'Existing approved leave',
             'start_date' => '2026-12-10',
             'end_date' => '2026-12-15',

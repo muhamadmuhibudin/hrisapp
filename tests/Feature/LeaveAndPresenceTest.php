@@ -57,7 +57,6 @@ class LeaveAndPresenceTest extends TestCase
         $response = $this->actingAs($this->employeeUser)
             ->post(route('leave-requests.store'), [
                 'employee_id' => $this->employee->id,
-                'leave_type'  => 'Sick Leave',
                 'reason'      => 'Medical checkup',
                 'start_date'  => now()->addDays(2)->toDateString(),
                 'end_date'    => now()->addDays(3)->toDateString(),
@@ -76,7 +75,6 @@ class LeaveAndPresenceTest extends TestCase
     {
         $leave = LeaveRequest::create([
             'employee_id' => $this->employee->id,
-            'leave_type'  => 'Annual Leave',
             'reason'      => 'Family vacation',
             'start_date'  => now()->addDays(5)->toDateString(),
             'end_date'    => now()->addDays(6)->toDateString(),
@@ -90,7 +88,6 @@ class LeaveAndPresenceTest extends TestCase
         $this->actingAs($this->employeeUser)
             ->put(route('leave-requests.update', $leave), [
                 'employee_id' => $this->employee->id,
-                'leave_type'  => 'Sick Leave',
                 'reason'      => 'Updated reason',
                 'start_date'  => now()->addDays(5)->toDateString(),
                 'end_date'    => now()->addDays(6)->toDateString(),

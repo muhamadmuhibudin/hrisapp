@@ -131,7 +131,6 @@ class HrisApiTest extends TestCase
 
         // Create initial leave request
         $createResponse = $this->postJson('/api/v1/leave-requests', [
-            'leave_type' => 'Annual Leave',
             'reason' => 'Family trip',
             'start_date' => '2026-12-01',
             'end_date' => '2026-12-03',
@@ -144,7 +143,6 @@ class HrisApiTest extends TestCase
 
         // Overlapping dates are rejected
         $this->postJson('/api/v1/leave-requests', [
-            'leave_type' => 'Sick Leave',
             'reason' => 'Overlapping request',
             'start_date' => '2026-12-02',
             'end_date' => '2026-12-04',
@@ -152,19 +150,27 @@ class HrisApiTest extends TestCase
 
         // Employee cannot approve their own leave request
         $this->patchJson("/api/v1/leave-requests/{$leaveId}/status", [
-            'status' => 'confirmed',
+            'status' => 'approved',
         ])->assertForbidden();
 
         // HR Manager can approve the leave request
         Sanctum::actingAs($this->hrUser);
         $this->patchJson("/api/v1/leave-requests/{$leaveId}/status", [
-            'status' => 'confirmed',
+            'status' => 'approved',
         ])
             ->assertOk()
-            ->assertJsonPath('data.status', 'confirmed');
+            ->assertJsonPath('data.status', 'approved')
+            ->assertJsonPath('data.approved_by', $this->hrUser->name);
+
+        // Already processed leave request cannot be approved twice
+        $this->patchJson("/api/v1/leave-requests/{$leaveId}/status", [
+            'status' => 'approved',
+        ])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'This leave request has already been processed.');
 
         $this->assertDatabaseHas('activity_logs', [
-            'action' => 'leave.confirmed',
+            'action' => 'leave.approved',
             'subject_id' => $leaveId,
         ]);
     }

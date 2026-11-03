@@ -31,13 +31,11 @@ class LeaveRequestController extends Controller
         abort_unless($user->employee_id, 422, 'User is not linked to an employee profile.');
 
         $validated = $request->validate([
-            'leave_type' => ['required', 'string', 'max:100'],
             'reason' => ['required', 'string', 'max:500'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
         ]);
 
-        // Prevent overlapping leave requests
         $hasOverlap = LeaveRequest::where('employee_id', $user->employee_id)
             ->where('status', '!=', 'rejected')
             ->where(function ($query) use ($validated) {
@@ -54,7 +52,6 @@ class LeaveRequestController extends Controller
 
         $leaveRequest = LeaveRequest::create([
             'employee_id' => $user->employee_id,
-            'leave_type' => $validated['leave_type'],
             'reason' => $validated['reason'],
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
@@ -67,15 +64,31 @@ class LeaveRequestController extends Controller
             ->setStatusCode(201);
     }
 
-    public function updateStatus(Request $request, LeaveRequest $leaveRequest): LeaveRequestResource
+    public function updateStatus(Request $request, LeaveRequest $leaveRequest): JsonResponse|LeaveRequestResource
     {
         abort_unless(in_array($request->user()->role_id, [1, 2]), 403, 'Unauthorized.');
 
+        if ($leaveRequest->status !== 'pending') {
+            return response()->json([
+                'message' => 'This leave request has already been processed.',
+            ], 422);
+        }
+
         $validated = $request->validate([
-            'status' => ['required', 'in:confirmed,rejected'],
+            'status' => ['required', 'in:approved,rejected'],
         ]);
 
-        $leaveRequest->update(['status' => $validated['status']]);
+        $data = ['status' => $validated['status']];
+
+        if ($validated['status'] === 'approved') {
+            $data['approved_by'] = $request->user()->id;
+            $data['approved_at'] = now();
+        } else {
+            $data['rejected_by'] = $request->user()->id;
+            $data['rejected_at'] = now();
+        }
+
+        $leaveRequest->update($data);
 
         ActivityLog::record(
             'leave.' . $validated['status'],
@@ -83,7 +96,7 @@ class LeaveRequestController extends Controller
             $leaveRequest
         );
 
-        return (new LeaveRequestResource($leaveRequest->load('employee')))
+        return (new LeaveRequestResource($leaveRequest->load(['employee', 'approvedBy', 'rejectedBy'])))
             ->additional(['message' => 'Leave request status updated.']);
     }
 }

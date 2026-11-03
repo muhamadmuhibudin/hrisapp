@@ -13,11 +13,14 @@ class LeaveRequestResource extends JsonResource
             'id' => $this->id,
             'employee_id' => $this->employee_id,
             'employee' => $this->whenLoaded('employee', fn() => $this->employee->fullname),
-            'leave_type' => $this->leave_type,
             'reason' => $this->reason,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'status' => $this->status,
+            'approved_by' => $this->whenLoaded('approvedBy', fn() => $this->approvedBy?->name),
+            'approved_at' => $this->approved_at?->toDateTimeString(),
+            'rejected_by' => $this->whenLoaded('rejectedBy', fn() => $this->rejectedBy?->name),
+            'rejected_at' => $this->rejected_at?->toDateTimeString(),
         ];
     }
 }

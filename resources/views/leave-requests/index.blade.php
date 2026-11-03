@@ -38,16 +38,19 @@
                                 Request</a>
                         @endcan
                     </div>
-                     <!-- Alert Messages -->
+
+                    <!-- Alert Messages -->
                     @if (session('success'))
-                        <div style="color: green; padding: 10px; border: 1px solid green; margin-bottom: 15px;">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
                             {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
 
                     @if (session('error'))
-                        <div style="color: red; padding: 10px; border: 1px solid red; margin-bottom: 15px;">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
 
@@ -65,9 +68,8 @@
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Status</th>
-                                @if(in_array(Auth::user()->employee?->role?->title, ['Super Admin', 'HR Manager']))
-                                    <th>Option</th>
-                                @endif
+                                <th>Approval Info</th>
+                                <th>Option</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,7 +77,6 @@
                                 @php
                                     $status = strtolower($leaveRequest->status);
                                     $displayStatus = ucfirst($status);
-                                    $role = Auth::user()->employee?->role?->title;
                                 @endphp
 
                                 <tr>
@@ -87,29 +88,46 @@
                                     <!-- STATUS -->
                                     <td>
                                         @if($status === 'pending')
-                                            <span class="badge bg-warning">{{ $displayStatus }}</span>
+                                            <span class="badge bg-warning">Pending</span>
+                                        @elseif($status === 'approved')
+                                            <span class="badge bg-success">Approved</span>
                                         @elseif($status === 'rejected')
-                                            <span class="badge bg-danger">{{ $displayStatus }}</span>
-                                        @elseif($status === 'confirmed')
-                                            <span class="badge bg-success">{{ $displayStatus }}</span>
+                                            <span class="badge bg-danger">Rejected</span>
+                                        @else
+                                            <span class="badge bg-secondary">{{ $displayStatus }}</span>
+                                        @endif
+                                    </td>
+
+                                    <!-- APPROVAL INFO -->
+                                    <td>
+                                        @if($status === 'approved' && $leaveRequest->approvedBy)
+                                            <small class="d-block fw-semibold text-success">
+                                                Approved by: {{ $leaveRequest->approvedBy->name }}
+                                            </small>
+                                            <small class="text-muted">
+                                                {{ $leaveRequest->approved_at?->format('d M Y, H:i') }}
+                                            </small>
+                                        @elseif($status === 'rejected' && $leaveRequest->rejectedBy)
+                                            <small class="d-block fw-semibold text-danger">
+                                                Rejected by: {{ $leaveRequest->rejectedBy->name }}
+                                            </small>
+                                            <small class="text-muted">
+                                                {{ $leaveRequest->rejected_at?->format('d M Y, H:i') }}
+                                            </small>
+                                        @else
+                                            <span class="text-muted">-</span>
                                         @endif
                                     </td>
 
                                     <!-- ACTIONS -->
-                                    <td class="d-flex justify-content-between">
+                                    <td class="d-flex justify-content-between gap-1">
                                         <div class="d-flex gap-1">
                                             @can('confirm', $leaveRequest)
                                                 @if($status === 'pending')
                                                     <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
-                                                        class="btn btn-sm btn-success">Confirm</a>
+                                                        class="btn btn-sm btn-success">Approve</a>
                                                     <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
                                                         class="btn btn-sm btn-warning">Reject</a>
-                                                @elseif($status === 'confirmed')
-                                                    <a href="{{ route('leave-requests.reject', $leaveRequest->id) }}"
-                                                        class="btn btn-sm btn-warning">Reject</a>
-                                                @elseif($status === 'rejected')
-                                                    <a href="{{ route('leave-requests.confirm', $leaveRequest->id) }}"
-                                                        class="btn btn-sm btn-success">Confirm</a>
                                                 @endif
                                             @endcan
                                         </div>
@@ -133,17 +151,15 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center text-gray-500 py-10">
+                                    <td colspan="7" class="text-center text-gray-500 py-10">
                                         No leave requests found.
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
-
                     </table>
                 </div>
             </div>
-
         </section>
     </div>
 @endsection

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LeaveRequestResource;
-use App\Models\ActivityLog;
 use App\Models\LeaveRequest;
+use App\Models\ActivityLog;
+use App\Notifications\LeaveRequestStatusUpdatedNotification;
+use App\Notifications\LeaveRequestSubmittedNotification;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -58,6 +62,11 @@ class LeaveRequestController extends Controller
             'status' => 'pending',
         ]);
 
+        $hrAdmins = User::whereIn('role_id', [1, 2])->get();
+        if ($hrAdmins->isNotEmpty()) {
+            Notification::send($hrAdmins, new LeaveRequestSubmittedNotification($leaveRequest));
+        }
+
         return (new LeaveRequestResource($leaveRequest->load('employee')))
             ->additional(['message' => 'Leave request submitted successfully.'])
             ->response()
@@ -94,6 +103,11 @@ class LeaveRequestController extends Controller
             'leave.' . $validated['status'],
             "API: {$validated['status']} leave request #{$leaveRequest->id}",
             $leaveRequest
+        );
+
+        $leaveRequest->load(['employee.user', 'approvedBy', 'rejectedBy']);
+        $leaveRequest->employee?->user?->notify(
+            new LeaveRequestStatusUpdatedNotification($leaveRequest)
         );
 
         return (new LeaveRequestResource($leaveRequest->load(['employee', 'approvedBy', 'rejectedBy'])))

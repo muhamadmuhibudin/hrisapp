@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\Employee;
 use App\Models\LeaveRequest;
+use App\Models\User;
+use App\Notifications\LeaveRequestStatusUpdatedNotification;
+use App\Notifications\LeaveRequestSubmittedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class LeaveRequestController extends Controller
 {
@@ -70,13 +74,18 @@ class LeaveRequestController extends Controller
                 ->with('error', 'Leave request dates overlap with an existing scheduled leave.');
         }
 
-        LeaveRequest::create([
+        $leaveRequest = LeaveRequest::create([
             'employee_id' => $employeeId,
             'reason' => $request->reason,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'status' => 'pending',
         ]);
+
+        $hrAdmins = User::whereIn('role_id', [1, 2])->get();
+        if ($hrAdmins->isNotEmpty()) {
+            Notification::send($hrAdmins, new LeaveRequestSubmittedNotification($leaveRequest));
+        }
 
         return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request submitted successfully.');
@@ -152,6 +161,11 @@ class LeaveRequestController extends Controller
             $leaveRequest
         );
 
+        $leaveRequest->load(['employee.user', 'approvedBy']);
+        $leaveRequest->employee?->user?->notify(
+            new LeaveRequestStatusUpdatedNotification($leaveRequest)
+        );
+
         return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request approved successfully.');
     }
@@ -176,6 +190,11 @@ class LeaveRequestController extends Controller
             'leave.rejected',
             "Rejected leave request #{$leaveRequest->id} for {$leaveRequest->employee->fullname}",
             $leaveRequest
+        );
+
+        $leaveRequest->load(['employee.user', 'rejectedBy']);
+        $leaveRequest->employee?->user?->notify(
+            new LeaveRequestStatusUpdatedNotification($leaveRequest)
         );
 
         return redirect()->route('leave-requests.index')

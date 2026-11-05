@@ -1,0 +1,322 @@
+{
+    "info": {
+        "_postman_id": "a7f9c2e1-4b8d-4e3a-9c1f-2d6e8b0a1c3f",
+        "name": "HRIS Laravel REST API v1",
+        "description": "RESTful API v1 collection for HRIS System with Laravel Sanctum Bearer authentication, RBAC enforcement, attendance tracking, leave approval workflow, and payroll access.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://127.0.0.1:8000/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Login (Issue Sanctum Token)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    const token = jsonData.token || (jsonData.data && jsonData.data.token);",
+                                    "    if (token) {",
+                                    "        pm.collectionVariables.set('token', token);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"hr@example.com\",\n    \"password\": \"password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Authenticated User Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/me",
+                            "host": ["{{base_url}}"],
+                            "path": ["me"]
+                        }
+                    }
+                },
+                {
+                    "name": "Logout (Revoke Token)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["logout"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Employees (HR & Admin)",
+            "item": [
+                {
+                    "name": "List All Employees",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/employees",
+                            "host": ["{{base_url}}"],
+                            "path": ["employees"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Employee Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/employees/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["employees", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Presences",
+            "item": [
+                {
+                    "name": "List Presence Records",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/presences",
+                            "host": ["{{base_url}}"],
+                            "path": ["presences"]
+                        }
+                    }
+                },
+                {
+                    "name": "Daily Check-In",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/presences/check-in",
+                            "host": ["{{base_url}}"],
+                            "path": ["presences", "check-in"]
+                        }
+                    }
+                },
+                {
+                    "name": "Daily Check-Out",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/presences/check-out",
+                            "host": ["{{base_url}}"],
+                            "path": ["presences", "check-out"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Leave Requests & Approval Workflow",
+            "item": [
+                {
+                    "name": "List Leave Requests",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/leave-requests",
+                            "host": ["{{base_url}}"],
+                            "path": ["leave-requests"]
+                        }
+                    }
+                },
+                {
+                    "name": "Submit Leave Request",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"reason\": \"Annual family trip\",\n    \"start_date\": \"2026-12-10\",\n    \"end_date\": \"2026-12-12\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/leave-requests",
+                            "host": ["{{base_url}}"],
+                            "path": ["leave-requests"]
+                        }
+                    }
+                },
+                {
+                    "name": "Approve / Reject Leave Request (HR & Admin)",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"status\": \"approved\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/leave-requests/1/status",
+                            "host": ["{{base_url}}"],
+                            "path": ["leave-requests", "1", "status"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Payrolls",
+            "item": [
+                {
+                    "name": "List Payrolls (Scoped by Role)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payrolls",
+                            "host": ["{{base_url}}"],
+                            "path": ["payrolls"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Payroll Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payrolls/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["payrolls", "1"]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
